@@ -1,0 +1,9 @@
+.idea/vcs.xml
+.idea/misc.xml
+.idea/workspace.xml
+output/main.cpp
+testrunner/main.cpp
+cmake-build-debug
+cmake-build-release
+CMakeCache.txt
+CMakeFiles/**/*

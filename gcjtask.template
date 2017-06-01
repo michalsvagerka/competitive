@@ -1,0 +1,41 @@
+#include "../l/lib.h"
+// #include "../l/mod.h"
+#include <thread>
+
+class %ClassName% {
+public:
+    struct Calc {
+
+        void calc() {
+            // TODO: code here
+        }
+
+        void read(istream& cin) {
+            // TODO: input here
+        }
+
+        void write(ostream &cout) {
+            // TODO: output here
+            cout << endl;
+        }
+
+        std::thread th;
+    };
+
+
+    vector<Calc> C;
+	void solve(istream& cin, ostream& cout) {
+        int T; cin >> T; C.resize(T);
+		for (int t = 0; t < T; ++t) {
+			Calc *c = &C[t];
+			c->read(cin);
+			c->th = std::thread{[=]() mutable {c->calc();}};
+		}
+
+		for (int t = 0; t < T; ++t) {
+		    C[t].th.join();
+            cout << "Case #" << t+1 << ": ";
+			C[t].write(cout);
+		}
+	}
+};
