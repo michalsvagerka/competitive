@@ -1,8 +1,4 @@
-
-
-#include <cstddef>
-#include <vector>
-
+#include "lib.h"
 
 template<typename T> struct Fenwick {
 	explicit Fenwick(size_t N, T t=T()):F(N,t),N(N),t(t){}
@@ -12,6 +8,7 @@ template<typename T> struct Fenwick {
 	T sum(int i)const{T sum(t);while(i){sum+=F[i-1];i-=lsb(i);}return sum;}
 	T range(int i,int j)const{T s(t);while(j>i){s+=F[j-1];j-=lsb(j);}while(i>j){s-=F[i-1];i-=lsb(i);}return s;}
 	T get(int i)const{return range(i,i+1);}
+	void set(int i, T v) {add(i, v-get(i)); }
 	constexpr int lsb(int i)const{return i&-i;}
 	vector<T> F;size_t N;T t;
 };
@@ -82,5 +79,8 @@ template<typename T> using SetGetTree = SegTree<T, NoCombine<T>>;
 template<typename T> using AddSumTree = SegTree<T, LazyProp<T, AddOp<T>, AddOp<T>, MultOp<T>>>;
 template<typename T> using AddMaxTree = SegTree<T, LazyProp<T, AddOp<T>, MaxOp<T>, IdempOp<T>>>;
 template<typename T> using AddMinTree = SegTree<T, LazyProp<T, AddOp<T>, MinOp<T>, IdempOp<T>>>;
+template<typename T> using AssignMinTree = SegTree<T, LazyProp<T, MinOp<T>, MinOp<T>, IdempOp<T>>>;
+template<typename T> using AssignMaxTree = SegTree<T, LazyProp<T, MaxOp<T>, MaxOp<T>, IdempOp<T>>>;
+
 template<typename T> using SetMinTree = SegTree<T, Persistent<T, MinOp<T>>>;
 template<typename T> using SetMaxTree = SegTree<T, Persistent<T, MaxOp<T>>>;

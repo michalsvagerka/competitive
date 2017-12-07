@@ -1,5 +1,8 @@
 #ifndef MOD_H
 #define MOD_H
+
+#include "lib.h"
+
 template <unsigned int N> class Field {
     typedef unsigned int ui;
     typedef unsigned long long ull;
@@ -27,7 +30,7 @@ public:
 	inline bool operator!=(const Field<N>&o) const { return o.v!=v; }
 	inline explicit operator ui() const { return v; }
 	inline static vector<Field<N>>fact(int t){vector<Field<N>>F(t+1,1);for(int i=2;i<=t;++i){F[i]=F[i-1]*i;}return F;}
-	inline static vector<Field<N>>invfact(int t){vector<Field<N>>F(t+1,1);for(int i=2;i<=t;++i){F[i]=F[i-1]/i;}return F;}
+	inline static vector<Field<N>>invfact(int t){vector<Field<N>>F(t+1,1);Field<N> X{1};for(int i=2;i<=t;++i){X=X*i;}F[t]=1/X;for(int i=t-1;i>=2;--i){F[i]=F[i+1]*(i+1);}return F;}
 private: ui v;
 };
 template<unsigned int N>istream &operator>>(std::istream&is,Field<N>&f){unsigned int v;is>>v;f=v;return is;}

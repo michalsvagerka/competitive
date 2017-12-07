@@ -1,9 +1,11 @@
+#include "lib.h"
+
 template <typename Cost> class Hungary {
 public:
 	Hungary(const vector<vector<Cost>> &cost)
 			: cost(cost), n(cost.size()), max_match(0), lx(n,0), ly(n,0), q(n), xy(n, -1), yx(n, -1), S(n), T(n), slack(n), slackx(n), prev(n) {};
 
-	Cost hungarian() {
+	Cost maxCost() {
 		for (int x = 0; x < n; x++) lx[x] = *max_element(cost[x].begin(), cost[x].end());
 
 		while (max_match != n) augment();
@@ -13,14 +15,19 @@ public:
 		return ret;
 	}
 
+	Cost minCost() {
+		for (auto &c:cost) for (auto&cc:c) cc = -cc;
+		return -maxCost();
+	}
+
 	vector<vector<Cost>> cost;
 	int n, max_match;
 	vector<Cost> lx, ly, q, slack, slackx;
 	vector<int> xy, yx, prev;
 	vector<bool> S,T;
 
-	int find_augmenting_path(int &x) {
-		int wr = 0, rd = 0;
+	int find_augmenting_path(int &x, int wr) {
+		int rd = 0;
 		while (true) {
 			while (rd < wr) {
 				x = q[rd++];
@@ -54,6 +61,7 @@ public:
 
 	void augment() {
 		int x, root;
+		int wr = 0;
 		fill(S.begin(), S.end(), false);
 		fill(T.begin(), T.end(), false);
 		fill(prev.begin(), prev.end(), -1);
@@ -70,7 +78,7 @@ public:
 			slackx[y] = root;
 		}
 
-		int y = find_augmenting_path(x);
+		int y = find_augmenting_path(x, wr);
 		max_match++;
 		for (int cx = x, cy = y, ty; cx != -2; cx = prev[cx], cy = ty) {
 			ty = xy[cx];

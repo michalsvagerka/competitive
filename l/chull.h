@@ -1,14 +1,17 @@
+#include "lib.h"
+/*
 auto polar = [](pii&a,pii&b) {
     if (a.y==0&&a.x>0) return true;
 	if (b.y==0&&b.x>0) return false;
 	if (a.y>0&&b.y<0) return true;
 	return !(a.y<0&&b.y>0) && ((ll)a.x*b.y-(ll)a.y*b.x)>0;
 };
+*/
 typedef pair<ll,ll> pll;
 
 ll ccw(const pll&a, const pll&b, const pll&c) { return (ll)(b.x-a.x)*(c.y-a.y) - (ll)(b.y-a.y)*(c.x-a.x); }
 ll area(const pll&a,const pll&b,const pll&c) { return abs(ccw(a,b,c)); }
-
+/*
 vector<pii> convexhull(const vector<pii> &v) {
     int N = v.size(); vector<pii> w(N+1); int lo = 0;
     for (int i = 0; i<N; ++i) if (v[i].y < v[lo].y) lo = i;
@@ -28,3 +31,4 @@ vector<pii> convexhull(const vector<pii> &v) {
     return res;
 }
 
+*/

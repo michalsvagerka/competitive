@@ -3,49 +3,61 @@
 
 class multiples {
 public:
-	ll calc_dp(int X, ll U, vector<bool> &R) {
-		vector2<pair<ll,ll>> D(12, X, {0LL,0LL});
-		D[0][0] = {1,0};
-		for (int i = 1; i <= 11; ++i) {
-			ll p = 1;
-			for (int j = i; j < 11; ++j) p*=10;
-			int d = U / p % 10;
-			for (int k = 0; k < X; ++k) {
-				cerr << D[i-1][k].x << ' ' << D[i-1][k].y << endl;
-				for (int j = 0; j < d; ++j) {
-					if (R[j]) D[i][(10*k+j)%X].y += D[i-1][k].x;
-				}
-				if (R[d]) D[i][(10*k+d)%X].x += D[i-1][k].x;
-				for (int j = 0; j <= 9; ++j) {
-					if (R[j]) D[i][(10*k+j)%X].y += D[i-1][k].y;
+	vector<bool> D;
+
+	ll dp(ll X, ll upTo) {
+		vector3<ll> R(13, X, 4, 0);
+		R[0][0][0] = 1;
+		for (int i = 0; i < 12; ++i) {
+			ll dig = upTo;
+			for (int j = i; j < 11; ++j) {
+				dig /= 10;
+			}
+			dig %= 10;
+			for (int j = 0; j < X; ++j) {
+				for (int k = 0; k < 4; ++k) {
+					if (!R[i][j][k]) continue;
+					bool hasStarted = (k & 1) == 1;
+					bool isLower = (k & 2) == 2;
+					if (!hasStarted || D[0]) {
+						R[i+1][(10*j)%X][hasStarted | ((isLower || dig > 0) << 1)] += R[i][j][k];
+					}
+
+					for (int d = 1; d < 10; ++d) {
+						if (!D[d]) continue;
+						if (!isLower && d > dig) break;
+						R[i+1][(10*j+d)%X][1 | ((isLower || d < dig) << 1)] += R[i][j][k];
+					}
 				}
 			}
 		}
-		return D[11][0].x + D[11][0].y;
+		return R[12][0][0] + R[12][0][1] + R[12][0][2] + R[12][0][3];
+	}
+
+	bool correctDigits(ll V) {
+		while (V > 0) {
+			int d = V%10;
+			if (!D[d]) return false;
+			V /= 10;
+		}
+		return true;
 	}
 
     void solve(istream& cin, ostream& cout) {
-		ll X=$,A=$,B=$;
-		string S=$;
-		vector<bool> R(10, false);
-		for (char c:S) R[c-'0']=true;
-		ll ans = 0;
-		if (X >= 10000) {
-			for (ll i = 1; i*X <= B; ++i) {
-				if (X*i >= A) {
-					ll y = X*i;
-					bool ok = true;
-					while (y) {
-						ok &= R[y%10];
-						y /= 10;
-					}
-					ans += ok;
+		ll X, A, B; cin >> X >> A >> B;
+		D=vector<bool>(10, false);
+		string S; cin >> S;
+		for(char s:S) D[s-'0'] = true;
+		if (X <= 100000) {
+			cout << dp(X, B) - dp(X, A-1) << endl;
+		} else {
+			int ans = 0;
+			for (int i = 1 + (A-1) / X; i <= B / X; ++i) {
+				if (correctDigits(i*X)) {
+					++ans;
 				}
 			}
-		} else {
-			ans = calc_dp(X, B, R) - calc_dp(X, A-1, R);
+			cout << ans << endl;
 		}
-
-		cout << ans << endl;
     }
 };

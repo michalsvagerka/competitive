@@ -1,3 +1,5 @@
+#ifndef MAJK_DINIC
+#define MAJK_DINIC
 #include "lib.h"
 
 // DINIC MAX-FLOW ALGORITHM. LOOK ELSEWHERE
@@ -99,3 +101,4 @@ template<typename T> struct Dinic {
 	};
 };
 // DINIC MAX-FLOW ALGORITHM
+#endif

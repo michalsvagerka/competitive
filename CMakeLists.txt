@@ -9,3 +9,4 @@ file(GLOB_RECURSE HEADERS "l/*.h" )
 ADD_DEFINITIONS(-std=c++11)
 
 add_executable(test ${TASKS} ${HEADERS})
+
