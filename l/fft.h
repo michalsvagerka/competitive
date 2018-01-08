@@ -30,8 +30,8 @@ public:
 
 	void fft(std::vector<F> &V, const int P, bool inverse = false) {
 		if (P == 0) return;
-		if (P > Group<Prime>::bits) throw std::runtime_error("Number of bits in FFT too large");
-		if (V.size() != (1 << P)) throw std::runtime_error("Vector has wrong size");
+		//if (P > Group<Prime>::bits) throw std::runtime_error("Number of bits in FFT too large");
+		//if (V.size() != (1 << P)) throw std::runtime_error("Vector has wrong size");
 		for (int i = 1, j = 0; i < (1 << P); ++i) {
 			int bit = (1 << (P - 1));
 			for (; j >= bit; bit >>= 1) j -= bit;
