@@ -14,74 +14,80 @@ template<typename T> struct Fenwick {
     ui N;vector<T> F;T t;
 };
 
-template<typename F>struct NoCombine {
-    const int NOCOMB=-2;
-    void setup(ui){}void op(F&p,F n,ui,ui,ui){p=n;}F up(F l,F r,ui){return l==r?l:NOCOMB;}
-    void down(F&u,F&l,F&r,ui,ui,ui){if(u!=NOCOMB){l=r=u;}u=NOCOMB;}};
-template<typename F,typename Op>struct Persistent{Op o;void setup(ui){}void op(F&p,F n,ui,ui, ui){p=n;}F up(F l, F r, ui){return o(l,r);}void down(F&,F&,F&,ui,ui, ui b) {}};
+template<typename F>struct NoOp{void setup(ui){}void op(F&p,F n,ui,ui, ui){p=n;}void down(F&,F&,F&,ui,ui,ui) {}};
 
-template<typename F,typename SetOp,typename CombineOp,typename PowerOp>struct LazyProp{
+template<typename F,typename SetOp,typename PowerOp>struct Lazy{
     void setup(ui s){this->s=s;L=new F[s]();}
-    void down(F&u,F&l,F&r,ui i,ui a,ui b){op(l,L[i],2*i,a,(a+b)/2);op(r,L[i],2*i+1,(a+b)/2,b);L[i]=0;}
-    void op(F&p,F n,ui i,ui a,ui b){p=sop(p,pop(n,b-a));if(i<this->s)this->L[i]=sop(this->L[i],n);}
-    F up(F l,F r,ui){return cop(l,r);}SetOp sop;CombineOp cop;PowerOp pop;F*L;ui s;
+    void down(F&u,F&l,F&r,ui i,ui s){op(l,L[i],i<<1,s>>1);op(r,L[i],i<<1|1,s>>1);L[i]=0;}
+    void op(F&p,F n,ui i,ui s){p=sop(p,pop(n,s));if(i<this->s)this->L[i]=sop(this->L[i],n);}
+    SetOp sop;PowerOp pop;F*L;ui s;
 };
 
 template <typename F> struct AddOp { F operator()(F a, F b) { return a+b; }};
-template <typename F> struct MultOp { F operator()(F a, F b) { return a*b; }};
-template <typename F> struct IdempOp { F operator()(F a, F b) { return a; }};
 template <typename F> struct MinOp { F operator()(F a, F b) { return std::min(a,b); }};
 template <typename F> struct MaxOp { F operator()(F a, F b) { return std::max(a,b); }};
+template <typename F> struct MultOp { F operator()(F a, ui b) { return a*b; }};
+template <typename F> struct IdempOp { F operator()(F a, ui b) { return a; }};
 
-template <typename F, typename Combine> struct SegTree {
+template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct SegTree {
 	void setup(ui s, F def) {
-		size = 1<<logceil(s);
-		T = vector<F>(2*size, def);
-		for (ui i = size-1; i > 0; i--) T[i] = op.up(T[2*i],T[2*i+1], i);
-		op.setup(2*size);
+		n = 1<<logceil(s);
+		T = vector<F>(2*n, def);
+		for (ui i = n-1; i > 0; i--) T[i] = cop(T[i<<1],T[i<<1|1]);
+		mop.setup(2*n);
 	}
 
 	void setup(vector<F> & data, F def = F()) {
-		size = 1<<logceil(data.size());
-		T = vector<F>(2*size, def);
-		copy(data.begin(), data.end(), T.begin() + size);
-		for (ui i = size-1; i > 0; i--) T[i] = op.up(T[2*i],T[2*i+1], i);
-		op.setup(2*size);
+		n = 1<<logceil(data.size());
+		T = vector<F>(2*n, def);
+		copy(data.begin(), data.end(), T.begin() + n);
+		for (ui i = n-1; i > 0; i--) T[i] = cop(T[i<<1],T[i<<1|1]);
+		mop.setup(2*n);
 	}
 
 	inline void put(ui x, F n) { put(x, x, n); }
-	inline void put(ui from, ui to, F n) { put2(from, to+1, n, 1, 0, size); }
+	inline void put(ui from, ui to, F v) { put2(from, to+1, v, 1, n); }
 	inline F get(ui x) { return get(x, x); }
-	inline F get(ui from, ui to) { return get2(from, to+1, 1, 0, size); }
+	inline F get(ui from, ui to) { return get2(from, to+1, 1, n); }
 
-	void put2(ui from, ui to, F n, ui i, ui a, ui b) {
-		if (from <= a && to >= b) { op.op(T[i], n, i, a, b); return; }
-		if (from >= b || to <= a) { return; }
-		op.down(T[i], T[2*i], T[2*i+1], i, a, b);
-		put2(from, to, n, 2*i, a, (a+b)/2);
-		put2(from, to, n, 2*i+1, (a+b)/2, b);
- 		T[i] = op.up(T[2*i], T[2*i+1], i);
+	void put2(ui from, ui to, F v, ui i, ui s) {
+		if (from == 0 && to == s) { mop.op(T[i], v, i, s); return; }
+		mop.down(T[i], T[i<<1], T[i<<1|1], i, s);
+        s>>=1;i<<=1;
+        if (to <= s) { put2(from, to, v, i, s); }
+        else if (from >= s) { put2(from-s, to-s, v, i|1, s); }
+        else {
+            put2(from, s, v, i, s);
+            put2(0, to-s, v, i|1, s);
+        }
+		T[i>>1] = cop(T[i], T[i|1]);
 	}
 
-	F get2(ui from, ui to, ui i, ui a, ui b) {
-		if (from <= a && to >= b) { return T[i]; }
-		op.down(T[i], T[2*i], T[2*i+1], i, a, b);
-		if (to <= (a+b)/2) { return get2(from, to, 2*i, a, (a+b)/2); }
-		else if (from >= (a+b)/2) { return get2(from, to, 2*i+1, (a+b)/2, b); }
-		else return op.up(get2(from, to, 2*i, a, (a+b)/2), get2(from, to, 2*i+1, (a+b)/2, b), i);
-	}
+	F get2(ui from, ui to, ui i, ui s) {
+        while (true) {
+            if (from == 0 && to == s) { return T[i]; }
+            mop.down(T[i], T[i << 1], T[i << 1 | 1], i, s);
+            s >>= 1;i <<= 1;
+            if (to > s) {
+                to -= s;
+                if (from >= s) {
+                    from -= s;
+                } else return cop(get2(from, s, i, s), get2(0, to, i | 1, s));
+            }
+        }
+    }
 
-	ui size;
+	ui n;
 	vector<F> T;
-	Combine op;
+	CombineOp cop;
+    ModifyOp mop;
 };
 
-template<typename T> using SetGetTree = SegTree<T, NoCombine<T>>;
-template<typename T> using AddSumTree = SegTree<T, LazyProp<T, AddOp<T>, AddOp<T>, MultOp<T>>>;
-template<typename T> using AddMaxTree = SegTree<T, LazyProp<T, AddOp<T>, MaxOp<T>, IdempOp<T>>>;
-template<typename T> using AddMinTree = SegTree<T, LazyProp<T, AddOp<T>, MinOp<T>, IdempOp<T>>>;
-template<typename T> using AssignMinTree = SegTree<T, LazyProp<T, MinOp<T>, MinOp<T>, IdempOp<T>>>;
-template<typename T> using AssignMaxTree = SegTree<T, LazyProp<T, MaxOp<T>, MaxOp<T>, IdempOp<T>>>;
+template<typename T> using AddSumTree = SegTree<T, AddOp<T>, Lazy<T, AddOp<T>, MultOp<T>>>;
+template<typename T> using AddMaxTree = SegTree<T, MaxOp<T>, Lazy<T, AddOp<T>, IdempOp<T>>>;
+template<typename T> using AddMinTree = SegTree<T, MinOp<T>, Lazy<T, AddOp<T>, IdempOp<T>>>;
+template<typename T> using AssignMinTree = SegTree<T, MinOp<T>, Lazy<T, MinOp<T>, IdempOp<T>>>;
+template<typename T> using AssignMaxTree = SegTree<T, MaxOp<T>, Lazy<T, MaxOp<T>, IdempOp<T>>>;
 
-template<typename T> using SetMinTree = SegTree<T, Persistent<T, MinOp<T>>>;
-template<typename T> using SetMaxTree = SegTree<T, Persistent<T, MaxOp<T>>>;
+template<typename T> using SetMinTree = SegTree<T, MinOp<T>>;
+template<typename T> using SetMaxTree = SegTree<T, MaxOp<T>>;

@@ -26,7 +26,7 @@ public:
 			if (R[i]) {
 				T.put(i, N[i]-1, L[O[i]]);
 			}
- 		}
+		}
 		ll ans = T.get(0, P-1);
 		for (int i = 0; i < P; ++i) {
 
