@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="vigenere" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="vigenere" cppPath="tasks/vigenere.cpp" inputType="STANDARD" outputType="STANDARD" testType="SINGLE">
+    <tests>
+      <test input="EVSKHWESVDFFT WLT WS JD KIVWIPA H WAUVGKEUXQ&#10;KNWLTQGB &quot;TWGMGSMUZI ZTWDD&quot;, DFPQQB XATD SZS&#10;NXKWCIJDZS HMXGE. SZ RSWSVDY FXI, HGIUXXSYXW&#10;HM G CSE CE OXOAEIVXM." output="PRAVDEPODOBNE STE SA UZ STRETLI S SIFROVACIM&#10;SYSTEMOM &quot;PERIODICKE HESLO&quot;, ZNAMYM TIEZ AKO&#10;VIGENEROVA SIFRA. AK NAHODOU NIE, PRECITAJTE&#10;SI O NOM NA WIKIPEDII." active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

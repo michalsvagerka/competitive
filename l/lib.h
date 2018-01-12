@@ -25,7 +25,7 @@ typedef std::pair<int,int> pii; typedef long long ll; typedef unsigned long long
 
 template <typename T, typename U> std::istream&operator>>(std::istream&i, pair<T,U>&p) {i >> p.x >> p.y; return i;}
 template<typename T>std::istream&operator>>(std::istream&i,vector<T>&t) {for(auto&v:t){i>>v;}return i;}
-template<typename T>std::ostream&operator<<(std::ostream&o,const vector<T>&t) {for(size_t i=0;i<t.size();++i){o<<t[i]<<" \n"[i == t.size()-1];}return o;}
+template<typename T>std::ostream&operator<<(std::ostream&o,const vector<T>&t) {if(t.empty())o<<'\n';for(size_t i=0;i<t.size();++i){o<<t[i]<<" \n"[i == t.size()-1];}return o;}
 template<typename T> using minheap = priority_queue<T, vector<T>, greater<T>>;
 template<typename T> using maxheap = priority_queue<T, vector<T>, less<T>>;
 auto fraclt = [](const pii&a,const pii&b) { return (ll)a.x * b.y < (ll)b.x * a.y; };

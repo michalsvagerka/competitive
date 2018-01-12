@@ -5,9 +5,9 @@
 //#include "bigint.h"
 #include "mod.h"
 
-template<ui N,ui M> class Chinese {
+template<ui N> class Chinese {
 public:
-    Chinese(const std::array<ui,N> &p) : P(1), p(p) {
+    Chinese(const std::array<ui,N> &p, int M) : P(1), M(M), p(p) {
         for(int i=0;i<N;++i)P*=p[i];
         for(int i=0;i<N;++i){ F[i]=P/p[i]; }
         for(int i=0;i<N;++i) { T[i]=Ring::div(1, (F[i]%p[i]), p[i]);}
@@ -22,6 +22,7 @@ public:
     }
 private:
     __int128 P;
+    int M;
     std::array<__int128,N> F;
     std::array<ui,N> T,p;
 };

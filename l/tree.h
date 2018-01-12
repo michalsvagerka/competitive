@@ -14,7 +14,7 @@ template<typename T> struct Fenwick {
     ui N;vector<T> F;T t;
 };
 
-template<typename F>struct NoOp{void setup(ui){}void op(F&p,F n,ui,ui, ui){p=n;}void down(F&,F&,F&,ui,ui,ui) {}};
+template<typename F>struct NoOp{void setup(ui){}void op(F&p,F n,ui,ui,ui){p=n;}void down(F&,F&,F&,ui,ui) {}};
 
 template<typename F,typename SetOp,typename PowerOp>struct Lazy{
     void setup(ui s){this->s=s;L=new F[s]();}
@@ -22,12 +22,6 @@ template<typename F,typename SetOp,typename PowerOp>struct Lazy{
     void op(F&p,F n,ui i,ui s){p=sop(p,pop(n,s));if(i<this->s)this->L[i]=sop(this->L[i],n);}
     SetOp sop;PowerOp pop;F*L;ui s;
 };
-
-template <typename F> struct AddOp { F operator()(F a, F b) { return a+b; }};
-template <typename F> struct MinOp { F operator()(F a, F b) { return std::min(a,b); }};
-template <typename F> struct MaxOp { F operator()(F a, F b) { return std::max(a,b); }};
-template <typename F> struct MultOp { F operator()(F a, ui b) { return a*b; }};
-template <typename F> struct IdempOp { F operator()(F a, ui b) { return a; }};
 
 template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct SegTree {
 	void setup(ui s, F def) {
@@ -65,14 +59,13 @@ template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct Se
 
 	F get2(ui from, ui to, ui i, ui s) {
         while (true) {
-            if (from == 0 && to == s) { return T[i]; }
+            if (from == 0 && to == s) return T[i];
             mop.down(T[i], T[i << 1], T[i << 1 | 1], i, s);
             s >>= 1;i <<= 1;
             if (to > s) {
                 to -= s;
-                if (from >= s) {
-                    from -= s;
-                } else return cop(get2(from, s, i, s), get2(0, to, i | 1, s));
+                if (from >= s) { from -= s; i|=1; }
+                else return cop(get2(from, s, i, s), get2(0, to, i|1, s));
             }
         }
     }
@@ -83,11 +76,20 @@ template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct Se
     ModifyOp mop;
 };
 
+
+template <typename F> struct AddOp { F operator()(F a, F b) { return a+b; }};
+template <typename F> struct MinOp { F operator()(F a, F b) { return std::min(a,b); }};
+template <typename F> struct MaxOp { F operator()(F a, F b) { return std::max(a,b); }};
+template <typename F> struct MultOp { F operator()(F a, ui b) { return a*b; }};
+template <typename F> struct IdempOp { F operator()(F a, ui b) { return a; }};
+template <typename F> struct InverseOp { F operator()(F a, F b) { return b?b-a:a; }};
+
 template<typename T> using AddSumTree = SegTree<T, AddOp<T>, Lazy<T, AddOp<T>, MultOp<T>>>;
 template<typename T> using AddMaxTree = SegTree<T, MaxOp<T>, Lazy<T, AddOp<T>, IdempOp<T>>>;
 template<typename T> using AddMinTree = SegTree<T, MinOp<T>, Lazy<T, AddOp<T>, IdempOp<T>>>;
 template<typename T> using AssignMinTree = SegTree<T, MinOp<T>, Lazy<T, MinOp<T>, IdempOp<T>>>;
 template<typename T> using AssignMaxTree = SegTree<T, MaxOp<T>, Lazy<T, MaxOp<T>, IdempOp<T>>>;
+template<typename T> using XorTree = SegTree<T, AddOp<T>, Lazy<T, InverseOp<T>, MultOp<T>>>;
 
 template<typename T> using SetMinTree = SegTree<T, MinOp<T>>;
 template<typename T> using SetMaxTree = SegTree<T, MaxOp<T>>;
