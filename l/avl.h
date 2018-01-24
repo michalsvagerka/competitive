@@ -17,10 +17,10 @@ template <typename K, typename V> struct avlnode {
 		else if (k>this->k) { return r ? r->get(k) : nullptr; }
 		else { return this; }
 	};
-	int smaller(K k) {
+	ui smaller(K k) {
 		if (k<this->k) return l ? l->smaller(k) : 0;
 		else {
-			int s = l ? l->s : 0;
+			ui s = l ? l->s : 0;
 			if (k==this->k) return s;
 			else return s+1+ (r?r->smaller(k):0);
 		}
@@ -49,10 +49,10 @@ template<typename K, typename V> struct avl {
 	avl() : r(0) {}
 	~avl() { delete r; }
 	avlnode<K,V>* get(K k) { return r?r->get(k):0; };
-	int smaller(K k) { return r?r->smaller(k):0; }
+	ui smaller(K k) { return r?r->smaller(k):0; }
 	void insert(K k, V v) { r=r?r->insert(k,v):new avlnode<K,V>(k,v); };
 	void remove(K k) { r=r?r->remove(k):r; }
-	avlnode<K,V>* select(int c) { if (!r||r->s<c||c<0) return 0; else return r->at(c); };
+	avlnode<K,V>* select(int c) { if (!r||r->s<=c||c<0) return 0; else return r->at(c); };
 	int size() const { return r?r->s:0; }
 	template<typename T> void foreach(T f) {if(r)r->foreach(f);}
 	avlnode<K,V> *r;

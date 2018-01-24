@@ -2,13 +2,15 @@
 
 // ordinary rooted tree with level ancestry and LCA. look elsewhere
 struct Tree {
-	explicit Tree(int N) : N(N), logN(logceil(N)), E(N) {}
+	explicit Tree(int N=1) : N(N), logN(logceil(N)), _root(0), E(N) {}
 	void addEdge(int u,int v){E[u].push_back(v);E[v].push_back(u);}
 	int la(int u, int depth){calcLA();return _la(u,depth);}
 	int lca(int u, int v){calcLA();return _lca(u,v);}
 	int parent(int u) { return P[u]; }
-	int root() { return 0; }
+	void setRoot(int r) { _root = r; }
+	int root() { return _root; }
 	const vector<int>& neighbors(int u) const { return E[u]; }
+    int depth(int u) { return D[u]; }
 
 private:
 	int _la(int u, int d)const{for(int i=0;i<logN&&u!=-1;++i){if(d&(1<<i))u=PP[i][u];}return u;}
@@ -16,11 +18,11 @@ private:
 		for(int i=logN-1;i>=0;--i)if(PP[i][u]!=PP[i][v]){u=PP[i][u];v=PP[i][v];}
 		return u==v?u:PP[0][v];
 	}
-	inline void calcParents(){if(P.size()==0){P.resize(N);D.resize(N);dfs(0,-1,0);}}
+	inline void calcParents(){if(P.size()==0){P.resize(N);D.resize(N);dfs(_root,-1,0);}}
 	void dfs(int u,int v,int d){P[u]=v;D[u]=d;for(int w:E[u])if(v!=w)dfs(w,u,d+1);}
 	inline void calcLA(){calcParents();if(PP.size()==0){PP=vector2<int>(logN,N,-1);for(int i=0;i<N;++i){PP[0][i]=P[i];}
 			for(int i=1;i<logN;++i)for(int j=0;j<N;++j)if(PP[i-1][j]!=-1)PP[i][j]=PP[i-1][PP[i-1][j]];}}
-	int N,logN; vector<vector<int>> E;vector<int> P,D;vector2<int>PP;
+	int N,logN,_root; vector<vector<int>> E;vector<int> P,D;vector2<int>PP;
 };
 
 // ordinary bipartite graph, with max. matching, max. indep. set and min. vertex cover. look elsewhere

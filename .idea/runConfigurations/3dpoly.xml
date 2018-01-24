@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="3dpoly" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="poly" cppPath="tasks/3dpoly.cpp" inputType="STANDARD" inputFile="input.txt" outputType="STANDARD" outputFile="output.txt" testType="SINGLE">
+    <tests>
+      <test input="5&#10;5 5 1" output="12" active="true" />
+      <test input="4&#10;4 4 4" output="7" active="true" />
+      <test input="4&#10;4 1 1" output="1" active="true" />
+      <test input="7 7 7 7" output="607" active="true" />
+      <test input="6 6 6 6" output="112" active="true" />
+      <test input="5 4 5 1" output="12" active="true" />
+      <test input="5 4 4 1" output="11" active="true" />
+      <test input="5 3 3 1" output="8" active="true" />
+      <test input="8 8 8 8" output="3811" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

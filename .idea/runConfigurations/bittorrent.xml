@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="bittorrent" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="bittorrent" cppPath="tasks/bittorrent.cpp" inputType="STANDARD" inputFile="input.txt" outputType="STANDARD" outputFile="output.txt" testType="SINGLE">
+    <tests>
+      <test input="5 10&#10;1111111111&#10;1111110011&#10;0001111111&#10;1111111111&#10;1100100000" output="seeds: 2 seen now, plus 1 distributed copies (2:70.0%, 3:10.0%, 4:0.0%)&#10;peers: 3 seen now" active="true" />
+      <test input="2 16&#10;1111111111111111&#10;1000000000000000" output="seeds: 1 seen now, plus 0 distributed copies (1:6.3%, 2:0.0%, 3:0.0%)&#10;peers: 1 seen now" active="true" />
+      <test input="1 9&#10;111100000" output="seeds: 0 seen now, plus 0 distributed copies (1:44.4%, 2:0.0%, 3:0.0%)&#10;peers: 1 seen now" active="true" />
+      <test input="1 9&#10;111110000" output="seeds: 0 seen now, plus 0 distributed copies (1:55.6%, 2:0.0%, 3:0.0%)&#10;peers: 1 seen now" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

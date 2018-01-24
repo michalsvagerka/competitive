@@ -1,5 +1,5 @@
 #include "../../l/lib.h"
-#include "../../l/tree.h"
+#include "../../l/segtree.h"
 
 class B {
 public:

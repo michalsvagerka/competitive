@@ -1,15 +1,9 @@
 #ifndef MAJK_DELAUNAY_H
 #define MAJK_DELAUNAY_H
 
-#include <vector>
-#include <queue>
-#include <algorithm>
+#include "geo.h"
 
-using namespace std;
-class Delaunay {
-public:
-    typedef pair<int,int> Point;
-
+template <typename T> class Delaunay {
 private:
     class QuadEdge {
         friend class Delaunay;
@@ -18,7 +12,7 @@ private:
         QuadEdge() : onext(nullptr), rot(nullptr), orig{0LL,0LL}, mark(false) {}
 
         inline QuadEdge* sym() const  {return rot->rot; }
-        inline Point dest() const { return sym()->orig; }
+        inline Point<T> dest() const { return sym()->orig; }
         inline QuadEdge* rotSym() const { return rot->sym(); }
         inline QuadEdge* oprev() const { return rot->onext->rot; }
         inline QuadEdge* lnext() const { return rotSym()->onext->rot; }
@@ -39,13 +33,13 @@ private:
 
     private:
         QuadEdge *onext, *rot;
-        Point orig;
+        Point<T> orig;
         bool mark;
     };
     class Factory {
     public:
         Factory() : p(0) {};
-        QuadEdge* makeEdge(Point orig, Point dest) {
+        QuadEdge* makeEdge(Point<T> orig, Point<T> dest) {
             QuadEdge *q0 = &Q[p], *q1 = &Q[p+1], *q2 = &Q[p+2], *q3 = &Q[p+3];
             p += 4;
 
@@ -68,14 +62,13 @@ private:
     };
 
 public:
-    vector<Point> triangulate(vector<Point> &points) {
+    vector<Point<T>> triangulate(vector<Point<T>> &points) {
         sort(points.begin(), points.end());
-        // TODO: remove duplicates (?)
         factory.Q.resize(40*points.size());
         factory.p = 0;
 
         QuadEdge* quadEdge = delaunay(points.begin(), points.end()).x;
-        vector<Point> faces;
+        vector<Point<T>> faces;
         queue<QuadEdge*> queue;
         queue.push(quadEdge);
 
@@ -110,7 +103,7 @@ public:
         return faces;
     }
 
-    pair<QuadEdge*, QuadEdge*> delaunay(vector<Point>::const_iterator begin, vector<Point>::const_iterator end) {
+    pair<QuadEdge*, QuadEdge*> delaunay(vector<Point<T>>::const_iterator begin, vector<Point<T>>::const_iterator end) {
         QuadEdge* a, *b, *c, *t;
 
         auto dist = std::distance(begin, end);
@@ -196,11 +189,10 @@ public:
     }
 
 private:
-    inline bool ccw(const Point&a, const Point&b, const Point&c) const { return ll(b.x-a.x)*(c.y-a.y) - ll(b.y-a.y)*(c.x-a.x) > 0; }
-    inline bool rightOf(const Point &x, const QuadEdge*e) const { return ccw(x, e->dest(), e->orig); }
-    inline bool leftOf(const Point &x, const QuadEdge*e) const { return ccw(x, e->orig, e->dest()); }
+    inline bool rightOf(const Point<T> &x, const QuadEdge*e) const { return ccw(x, e->dest(), e->orig); }
+    inline bool leftOf(const Point<T> &x, const QuadEdge*e) const { return ccw(x, e->orig, e->dest()); }
     inline bool valid(const QuadEdge *e, const QuadEdge*basel) const { return rightOf(e->dest(), basel); }
-    bool inCircle(const Point &a, const Point &b, const Point &c, const Point &d) const {
+    bool inCircle(const Point<T> &a, const Point<T> &b, const Point<T> &c, const Point<T> &d) const {
         if((a.x == d.x && a.y == d.y) || (b.x == d.x && b.y == d.y) || (c.x == d.x && c.y == d.y)) return false;
         double sa = (ll)a.x * a.x + (ll)a.y * a.y, sb = (ll)b.x * b.x + (ll)b.y * b.y, sc = (ll)c.x * c.x + (ll)c.y * c.y, sd = (ll)d.x * d.x + (ll)d.y * d.y;
         double d1 = sc - sd, d2 = c.y - d.y, d3 = c.y * sd - sc * d.y, d4 = c.x - d.x, d5 = c.x * sd - sc * d.x, d6 = (ll)c.x * d.y - (ll)c.y * d.x;

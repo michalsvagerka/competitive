@@ -4,7 +4,9 @@
 
 template <typename T> class Matrix {
 public:
-	Matrix(size_t R, size_t C, T t=T()) : R(R), C(C), A(R,vector<T>(C,t)), def(t) {}
+	Matrix(size_t R, size_t C, T t=T(0)) : R(R), C(C), A(R,vector<T>(C,t)), def(t) {}
+	Matrix(const vector<vector<T>> &a, T t=T(0)) : R(a.size()), C(a[0].size()), A(a), def(t) {}
+	Matrix(const initializer_list<vector<T>> &a, T t=T(0)) : R(a.size()), C(a.begin()->size()), A(a), def(t) {}
 	size_t rows() const { return R; }
 	size_t columns() const { return C; }
 	bool isSquare() const { return R*C; }
@@ -38,7 +40,7 @@ public:
 		else return 0;
 	}
 
-	vector<int> solveFor(const vector<int> &b) {
+	vector<T> solveFor(const vector<T> &b) {
 		if (!isSquare()) { throw std::runtime_error("Cannot solve a rectangular matrix"); }
 		if (b.size() != R) throw new std::runtime_error("Unable to solve linear equation, dimensions do not match");
 		Matrix<T> tmp(*this);
@@ -46,11 +48,23 @@ public:
 		++tmp.C;
 		tmp.toReducedRowEchelon();
 		if (!tmp.isIdentity()) throw std::runtime_error("Cannot solve a singular matrix");
-		vector<int> Ans(R);
+		vector<T> Ans(R);
 		for (int j = 0; j < R; ++j) Ans[j] = tmp.A[j].back();
 		return Ans;
 	}
 
+	Matrix<T> power(ui N) {
+		if (!isSquare()) { throw std::runtime_error("Cannot compute determinant of a rectangular matrix"); }
+
+		Matrix<T> ans(R, R, 0), pow = *this;
+		for (ui r = 0; r < R; ++r) ans[r][r] = 1;
+		while (N) {
+			if (N&1) ans = ans * pow;
+			N >>= 1;
+			pow = pow * pow;
+		}
+		return ans;
+	}
 
 	Matrix<T> & operator+=(const Matrix<T>&m) {
 		if (R != m.R) throw std::runtime_error("Cannot add matrices of different height");
@@ -85,6 +99,17 @@ public:
 			}
 		}
 		return Ans;
+	}
+
+	vector<T> operator*(const vector<T>&m) const {
+		if (C != m.size()) throw std::runtime_error("Matric and vector incompatible for multiplication");
+		vector<T> ans(R, def);
+		for (ui r = 0; r < R; ++r) {
+			for (ui c = 0; c < C; ++c) {
+				ans[r] += m[c]* (*this)[r][c];
+			}
+		}
+		return ans;
 	}
 
 	class Row {
