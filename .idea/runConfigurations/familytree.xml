@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="familytree" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="familytree" cppPath="tasks/familytree.cpp" inputType="STANDARD" outputType="STANDARD" testType="SINGLE">
+    <tests>
+      <test input="5&#10;BOB JOHN&#10;BOB JOHN&#10;BOB MARY&#10;BOB m&#10;AL f" output="-1" active="true" />
+      <test input="6&#10;BOB JOHN&#10;BOB MARY&#10;MARY JOHN&#10;JOHN f&#10;MARY f&#10;AL f" output="4" active="true" />
+      <test input="3&#10;BOB JOHN&#10;CARLA BOB&#10;JOHN CARLA" output="2" active="true" />
+      <test input="6&#10;BOB RICK&#10;AL RICK&#10;AL PAULA&#10;PAULA LINUS&#10;LINUS BOB&#10;BOB PAULA" output="5" active="true" />
+      <test input="2&#10;JOHN f&#10;JOHN m" output="1" active="true" />
+      <test input="6&#10;BOB MARY&#10;BOB JOHN&#10;MARY f&#10;LUCY JOHN&#10;LUCY ROB&#10;ROB m" output="5" active="true" />
+      <test input="8&#10;BOB MARY&#10;BOB JOHN&#10;MARY f&#10;LUCY JOHN&#10;LUCY ROB&#10;DONNA ROB&#10;DONNA KATHY&#10;KATHY f" output="7" active="true" />
+      <test input="6&#10;FOO BOB&#10;FOO LUCY&#10;BAR BOB&#10;BAR ROB&#10;BAZ ROB&#10;BAZ LUCY" output="5" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

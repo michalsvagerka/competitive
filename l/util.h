@@ -1,6 +1,6 @@
 #include "lib.h"
 
-struct UnionFind {
+struct 	UnionFind {
 	UnionFind(size_t N) : P(N, -1), comp(N) {}
 	int find(int x) { while (P[x]>=0){x = P[x];}return x; }
 	bool united(int x, int y) { return find(x) == find(y); }

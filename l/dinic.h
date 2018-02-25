@@ -16,6 +16,7 @@ template<typename T> struct Dinic {
 	}
 
 	void AddEdge(ui x, ui y, T c1 = 1, T c2 = 0) {
+//		cerr << x << ' ' << y << endl;
 		EdgeTarget.push_back(y);
 		Capacity.push_back(c1);
 		Residual.push_back(c1);

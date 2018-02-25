@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="hypercube" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="hypercube" cppPath="tasks/hypercube.cpp" inputType="STANDARD" inputFile="input.txt" outputType="STANDARD" outputFile="output.txt" testType="SINGLE">
-    <tests>
-      <test input="3 110 011&#10;3 1 2&#10;5 00000 11111&#10;1 2 3 4 5&#10;4 1111 1000&#10;100 1 1 1&#10;4 1111 1000&#10;1 10 100 1000&#10;0" output="Case 1: 4&#10;Case 2: 35&#10;Case 3: 106&#10;Case 4: 123" active="true" />
-    </tests>
-    <method />
-  </configuration>
-</component>

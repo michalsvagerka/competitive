@@ -19,6 +19,15 @@ template <typename Input> struct KMP {
         return M;
     }
 
+    template <typename Character>
+    int advance(int i, Character ch) {
+        while (i != -1) {
+            if (W[i] == ch) return i+1;
+            i = T[i];
+        }
+        return 0;
+    }
+
     Input W;
     vector<int> T;
 };

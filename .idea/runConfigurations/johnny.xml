@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="johnny" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="johnny" cppPath="tasks/johnny.cpp" inputType="STANDARD" outputType="STANDARD" testType="SINGLE">
+    <tests>
+      <test input="3&#10;948 43958 1429912782&#10;95348 54988 345335&#10;943428 4353958 3444096692&#10;" output="YES&#10;NO&#10;YES" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

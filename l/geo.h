@@ -1,5 +1,6 @@
 #include "lib.h"
 
+constexpr double PI = 3.14159265358979323846;
 template <typename T> struct Segment;
 
 template <typename T> struct Point : public pair<T,T> {
@@ -16,6 +17,12 @@ template <typename T> ostream& operator<<(ostream&o, const Point<T>&p) { o << p.
 
 template <typename T> T ccw(const Point<T>&a, const Point<T>&b, const Point<T>&c) { return (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x); }
 template <typename T> T area(const Point<T>&a,const Point<T>&b,const Point<T>&c) { return abs(ccw(a,b,c)); }
+template <typename T> double cosangle(const Point<T>&a, const Point<T> &b, const Point<T> &c) {
+    return ((b.x-a.x)*(c.x-a.x) + (b.y-a.y)*(c.y-a.y)) / a.distance(b) / a.distance(c);
+}
+template <typename T> double angle(const Point<T>&a, const Point<T> &b, const Point<T> &c) {
+    return acos(cosangle(a,b,c));
+}
 template <typename T> int orientation(const Point<T>&a, const Point<T>&b, const Point<T>&c) { auto o = ccw(a,b,c); return (o>1e-6)-(o<-1e-6); }
 template <typename T> bool collinear(const Point<T>&a, const Point<T>&b, const Point<T>&c) { return orientation(a,b,c) == 0; }
 
@@ -31,7 +38,7 @@ template <typename T> struct Segment : public pair<Point<T>,Point<T>> {
     double length() const { return sqrt(squaredLength()); }
     
     bool contains(const Point<T> &q) const {
-        return collinear(x,q,y) && ((q.x <= max(x.x, y.x) && q.x >= min(x.x, y.x)) || (q.y <= max(x.y, y.y) && q.y >= min(x.y, y.y)));
+        return collinear(x,q,y) && ((q.x <= max(x.x, y.x) && q.x >= min(x.x, y.x)) && (q.y <= max(x.y, y.y) && q.y >= min(x.y, y.y)));
     }
     
     double distance(const Point<T>&p) const {
@@ -97,10 +104,10 @@ template <typename T> struct Circle {
         return p.squaredDistance(center) <= radius*radius;
     }
     bool contains(const Circle<T>&o) const {
-        return radius>=o.radius && center.squaredDistance(center) <= (radius-o.radius)*(radius-o.radius);
+        return radius>=o.radius && o.center.squaredDistance(center) <= (radius-o.radius)*(radius-o.radius);
     }
     bool touches(const Circle<T>&o) const {
-        T dist = center.squaredDistance(center);
+        T dist = center.squaredDistance(o.center);
         return dist == (radius-o.radius)*(radius-o.radius) || dist == (radius+o.radius)*(radius+o.radius);
     }
 };
@@ -136,7 +143,7 @@ template <typename T> Polygon<T> convexhull(const vector<Point<T>> &v) {
         if (a.y==0&&a.x>0) return true;
         if (b.y==0&&b.x>0) return false;
         if (a.y>0&&b.y<0) return true;
-        return !(a.y<0&&b.y>0) && (a.x*b.y-a.y*b.x)>1e-6;
+        return !(a.y<0&&b.y>0) && (a.x*b.y-a.y*b.x)>0;
     });
     w[0] = w[N];
     ui M=1;

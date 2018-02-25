@@ -14,7 +14,7 @@ public:
         for (ui i = 2; i < N; ++i) L[i] = L[i-1] + ((1<<L[i-1]) == i/2);
     }
 
-    T get(ui i, ui j) {
+    T get(ui i, ui j) const { //i,j is inclusive
         return op(A[L[j-i]][i], A[L[j-i]][j+1-(1<<L[j-i])]);
     }
 private:
@@ -24,5 +24,5 @@ private:
     vector<ui> L;
 };
 
-template <typename F> struct MinOp { F operator()(F a, F b) { return std::min(a,b); }};
-template <typename F> struct MaxOp { F operator()(F a, F b) { return std::max(a,b); }};
+template <typename F> struct MinOp { F operator()(F a, F b) const { return std::min(a,b); }};
+template <typename F> struct MaxOp { F operator()(F a, F b) const { return std::max(a,b); }};

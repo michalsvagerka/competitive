@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="complroute" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="complroute" cppPath="tasks/complroute.cpp" inputType="STANDARD" inputFile="input.txt" outputType="STANDARD" outputFile="output.txt" testType="SINGLE">
-    <tests>
-      <test input="3N,1E,1N,3E,2S,1W.&#10;10NW.&#10;END" output="You can go to (3.000,2.000), the distance is 3.606 steps.&#10;You can go to (-7.071,7.071), the distance is 10.000 steps." active="true" />
-    </tests>
-    <method />
-  </configuration>
-</component>

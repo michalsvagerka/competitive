@@ -5,6 +5,7 @@
 #include <stack>
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <map>
 #include <iomanip>
 #include <set>
@@ -25,12 +26,10 @@ typedef std::pair<int,int> pii; typedef long long ll; typedef unsigned long long
 
 template <typename T, typename U> std::istream&operator>>(std::istream&i, pair<T,U>&p) {i >> p.x >> p.y; return i;}
 template<typename T>std::istream&operator>>(std::istream&i,vector<T>&t) {for(auto&v:t){i>>v;}return i;}
+template <typename T, typename U> std::ostream&operator<<(std::ostream&o, const pair<T,U>&p) {o << p.x << ' ' << p.y; return o;}
 template<typename T>std::ostream&operator<<(std::ostream&o,const vector<T>&t) {if(t.empty())o<<'\n';for(size_t i=0;i<t.size();++i){o<<t[i]<<" \n"[i == t.size()-1];}return o;}
-template <typename T, typename U> std::ostream&operator<<(std::ostream&o, pair<T,U>&p) {o << p.x << ' ' << p.y; return o;}
 template<typename T> using minheap = priority_queue<T, vector<T>, greater<T>>;
 template<typename T> using maxheap = priority_queue<T, vector<T>, less<T>>;
-auto fraclt = [](const pii&a,const pii&b) { return (ll)a.x * b.y < (ll)b.x * a.y; };
-struct cmpfrac { bool operator()(const pii&a,const pii&b)const { return (ll)a.x * b.y < (ll)b.x * a.y; }};
 template <typename T> bool in(T a, T b, T c) { return a <= b && b < c; }
 ui logceil(int x) { return 8*sizeof(int)-__builtin_clz(x); }
 
@@ -48,14 +47,15 @@ template<typename T>class vector3:public vector<vector2<T>>{public:vector3(){} v
 template<typename T>class vector4:public vector<vector3<T>>{public:vector4(){} vector4(size_t a,size_t b,size_t c,size_t d,T t=T()):vector<vector3<T>>(a,vector3<T>(b,c,d,t)){}};
 template<typename T>class vector5:public vector<vector4<T>>{public:vector5(){} vector5(size_t a,size_t b,size_t c,size_t d,size_t e,T t=T()):vector<vector4<T>>(a,vector4<T>(b,c,d,e,t)){}};
 template <typename T> struct bounded_priority_queue {
-	inline bounded_priority_queue(ui X) : A(X), B(0) {}
-	inline void push(ui L, T V) { B = max(B, L); A[L].push(V); }
+	inline bounded_priority_queue(ui X) : A(X), B(0), s(0) {}
+	inline void push(ui L, T V) { B = max(B, L); A[L].push(V); ++s; }
 	inline const T &top() const { return A[B].front(); }
-	inline void pop() { A[B].pop(); while (B > 0 && A[B].empty()) --B; }
+	inline void pop() { --s; A[B].pop(); while (B > 0 && A[B].empty()) --B; }
 	inline bool empty() const { return A[B].empty(); }
-	inline void clear() { B = 0; for (auto &a: A) a = queue<T>(); }
+	inline void clear() { s = B = 0; for (auto &a: A) a = queue<T>(); }
+	inline ui size() const { return s; }
 private:
-	vector<queue<T>> A; ui B;
+	vector<queue<T>> A; ui B; int s;
 };
 
 
