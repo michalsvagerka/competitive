@@ -22,6 +22,7 @@ public:
                 if (c != C-1) x ^= A[R-1][c+1];
                 if (x) return false;
             }
+
             return true;
         } else {
             bool x = A[r-1][c];

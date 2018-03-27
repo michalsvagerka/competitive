@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="montecarlo" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="montecarlo" cppPath="tasks/montecarlo.cpp" inputType="STANDARD" outputType="STANDARD" testType="SINGLE">
+    <tests>
+      <test input="100 10 20&#10;20 101" active="true" />
+      <test input="100 10 20&#10;47 49999" active="true" />
+      <test input="100 100 200&#10;48 49999" active="true" />
+      <test input="100 1000 2000&#10;49 49999" active="true" />
+      <test input="100 10000 20000&#10;50 49999" active="true" />
+      <test input="100 10000 20000&#10;51 1000000007" active="true" />
+      <test input="100 100000 200000&#10;52 1000000007" active="true" />
+      <test input="100 1000000 2000000&#10;53 1000000007" active="true" />
+      <test input="100 10000000 20000000&#10;50 1000000007" active="true" />
+      <test input="100 100000000 200000000&#10;50 1000000007" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

@@ -66,6 +66,7 @@ template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct Se
 template <typename F> struct AddOp { F operator()(F a, F b) { return a+b; }};
 template <typename F> struct MinOp { F operator()(F a, F b) { return std::min(a,b); }};
 template <typename F> struct MaxOp { F operator()(F a, F b) { return std::max(a,b); }};
+template <typename F> struct MultiplyOp { F operator()(F a, F b) { return a*b; }};
 template <typename F> struct MultOp { F operator()(F a, ui b) { return a*b; }};
 template <typename F> struct IdempOp { F operator()(F a, ui b) { return a; }};
 template <typename F> struct InverseOp { F operator()(F a, F b) { return b?b-a:a; }};

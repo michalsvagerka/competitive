@@ -1,4 +1,4 @@
-#include "../l/lib.h"
+#include "../../l/lib.h"
 // #include "../l/mod.h"
 
 class dominodraw {

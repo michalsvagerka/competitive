@@ -53,7 +53,7 @@ public:
 		return Ans;
 	}
 
-	Matrix<T> power(ui N) {
+	Matrix<T> power(ull N) {
 		if (!isSquare()) { throw std::runtime_error("Cannot compute determinant of a rectangular matrix"); }
 
 		Matrix<T> ans(R, R, 0), pow = *this;

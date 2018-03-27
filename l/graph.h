@@ -27,18 +27,53 @@ private:
 
 // ordinary bipartite graph, with max. matching, max. indep. set and min. vertex cover. look elsewhere
 struct Bipartite {
-	explicit Bipartite(size_t A, size_t B) : A(A), B(B), N(A+B), ms(-1), eId(0), E(N), G(N+2) {}
-	void addEdge(int u,int v){E[u].push_back({v,eId++});E[v].push_back({u,eId++});G.AddEdge(u,v);}
-	size_t matchingSize(){calcMatchingSize();return ms;}
+	explicit Bipartite(ui A, ui B) : A(A), B(B), N(A+B), ms(-1), H(N,-1), used(A) {}
+	void addEdge(int u,int v){G.push_back(v);P.push_back(H[u]);H[u]=(ui)G.size()-1;}
+	ui matchingSize(){calcMatching();return ms;}
 	int matched(int v){calcMatching();return M[v];}
 	vector<int>cover(){calcCover();vector<int>C;for(int i=0;i<N;++i){if(Z[i]!=(i<A))C.push_back(i);}return C;}
 	vector<int>indep(){calcCover();vector<int>I;for(int i=0;i<N;++i){if(Z[i]==(i<A))I.push_back(i);}return I;}
 private:
-	void konigDfs(int u){if(Z[u]){return;}Z[u]=true;if(u<A){for(pii v:E[u])if(v.x!=M[u])konigDfs(v.x);}else if(M[u]!=-1)konigDfs(M[u]);}
-	inline void calcMatchingSize(){if(ms!=-1){return;}for(int i=0;i<A;++i){G.AddEdge(N, i);}for(int i=A;i<N;++i){G.AddEdge(i,N+1);}ms=(size_t)G.GetMaxFlow(N, N+1);}
-	inline void calcMatching(){if(M.size()==N){return;}calcMatchingSize();M=vector<int>(N,-1);for(int i=0;i<A;++i)for(pii ed:E[i])if(G.Capacity[ed.y]==0){M[i]=ed.x;M[ed.x]=i;}}
+	void konigDfs(int u){
+        if(Z[u]){return;}
+        Z[u]=true;
+        if(u<A){
+            for (ui p = H[u]; p != -1; p = P[p]) {
+                ui v = G[p];
+                if (v != M[u])konigDfs(v);
+            }
+        }
+        else if(M[u]!=-1)
+            konigDfs(M[u]);
+    }
+    bool matchingDfs(int u) {
+        if (used[u]) return false;
+        used[u] = true;
+
+        for (ui p = H[u]; p != -1; p = P[p]) {
+            ui v = G[p];
+            if (M[v]==-1) { M[u] = v; M[v] = u; ++ms; return true; }
+        }
+
+        for (ui p = H[u]; p != -1; p = P[p]) {
+            ui v = G[p];
+            if (matchingDfs(M[v])) { M[u] = v; M[v] = u; return true; }
+        }
+        return false;
+
+    }
+	inline void calcMatching(){
+        if(ms!=-1){return;}
+        M = vector<ui>(N,-1);
+        size_t cur; ms = 0;
+        do {
+            cur = ms;
+            for(int i=0;i<A;++i) used[i] = false;
+            for(int i=0;i<A;++i) if(M[i]==-1) matchingDfs(i);
+        } while(cur != ms);
+    }
 	inline void calcCover(){if(Z.size()==N){return;}calcMatching();Z=vector<bool>(N,false);for(int i=0;i<A;++i)if(M[i]==-1)konigDfs(i);}
-	size_t N,A,B,ms,eId;vector<vector<pii>>E;Dinic<char> G;vector<int>M;vector<bool>Z;
+	ui N,A,B,ms;vector<ui>M,H,G,P;vector<bool>Z,used;
 };
 
 struct DirectedGraph {
