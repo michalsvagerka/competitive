@@ -20,6 +20,16 @@ template <typename T> T area(const Point<T>&a,const Point<T>&b,const Point<T>&c)
 template <typename T> double cosangle(const Point<T>&a, const Point<T> &b, const Point<T> &c) {
     return ((b.x-a.x)*(c.x-a.x) + (b.y-a.y)*(c.y-a.y)) / a.distance(b) / a.distance(c);
 }
+
+template <typename T> bool acuteAngle(const Point<T> &a, const Point<T> &b, const Point<T> &c) {
+    return ((b.x-a.x)*(c.x-a.x) + (b.y-a.y)*(c.y-a.y)) > 0;
+}
+template <typename T> bool obtuseAngle(const Point<T> &a, const Point<T> &b, const Point<T> &c) {
+    return ((b.x-a.x)*(c.x-a.x) + (b.y-a.y)*(c.y-a.y)) < 0;
+}
+template <typename T> bool rightAngle(const Point<T> &a, const Point<T> &b, const Point<T> &c) {
+    return ((b.x-a.x)*(c.x-a.x) + (b.y-a.y)*(c.y-a.y)) == 0;
+}
 template <typename T> double angle(const Point<T>&a, const Point<T> &b, const Point<T> &c) {
     return acos(cosangle(a,b,c));
 }

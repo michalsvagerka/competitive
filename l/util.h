@@ -1,5 +1,17 @@
 #include "lib.h"
 
+template <typename T> struct bounded_priority_queue {
+	inline bounded_priority_queue(ui X) : A(X), B(0), s(0) {}
+	inline void push(ui L, T V) { B = max(B, L); A[L].push(V); ++s; }
+	inline const T &top() const { return A[B].front(); }
+	inline void pop() { --s; A[B].pop(); while (B > 0 && A[B].empty()) --B; }
+	inline bool empty() const { return A[B].empty(); }
+	inline void clear() { s = B = 0; for (auto &a: A) a = queue<T>(); }
+	inline ui size() const { return s; }
+private:
+	vector<queue<T>> A; ui B; int s;
+};
+
 struct 	UnionFind {
 	UnionFind(size_t N) : P(N, -1), comp(N) {}
 	int find(int x) { while (P[x]>=0){x = P[x];}return x; }
@@ -39,6 +51,11 @@ bool fractionGreaterOrEqual(ll a, ll b, ll c, ll d) {
 	if (d < 0) { d = -d; c = -c; }
 	return a < 0 && c < 0 ? mulull(-a, d) <= mulull(-c, b) : (a >= 0) && (c < 0 || mulull(a, d) >= mulull(c, b));
 }
+
+bool fractionGreaterOrEqual(pair<ll, ll> a, pair<ll, ll> b) {
+	return fractionGreaterOrEqual(a.x, a.y, b.x, b.y);
+}
+
 
 bool fractionGreaterOrEqual(double a, double b, double c, double d) {
 	return a/b >= c/d;

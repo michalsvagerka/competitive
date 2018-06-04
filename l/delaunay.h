@@ -3,6 +3,7 @@
 
 #include "geo.h"
 
+/// WARNING: there is an infinite loop on set (1,1), (1,2), (1,3), (4,0)
 template <typename T> class Delaunay {
 private:
     class QuadEdge {
@@ -103,10 +104,12 @@ public:
         return faces;
     }
 
-    pair<QuadEdge*, QuadEdge*> delaunay(vector<Point<T>>::const_iterator begin, vector<Point<T>>::const_iterator end) {
+    pair<QuadEdge*, QuadEdge*> delaunay(typename vector<Point<T>>::const_iterator begin, typename vector<Point<T>>::const_iterator end) {
         QuadEdge* a, *b, *c, *t;
 
         auto dist = std::distance(begin, end);
+
+        cerr << "Dela " << dist << endl;
         if (dist == 2) {
             a = factory.makeEdge(*begin, *next(begin));
             return { a, a->sym() };
@@ -132,8 +135,11 @@ public:
             auto right = delaunay(begin + dist / 2, end);
             QuadEdge *ldo = left.x, *ldi = left.y, *rdi = right.x, *rdo = right.y;
 
+            cerr << "Locota begin\n";
             // Compute the lower common tangent of L and R
             do {
+
+                cerr << "Locota\n";
                 if(leftOf(rdi->orig, ldi))
                     ldi = ldi->lnext();
                 else if(rightOf(ldi->orig, rdi))
@@ -141,6 +147,8 @@ public:
                 else
                     break;
             } while(true);
+
+            cerr << "Locota end\n";
 
             QuadEdge* basel = factory.connect(rdi->sym(), ldi);
             if(ldi->orig == ldo->orig)

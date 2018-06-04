@@ -11,9 +11,10 @@ struct Tree {
 	int root() { return _root; }
 	const vector<int>& neighbors(int u) const { return E[u]; }
     int depth(int u) { return D[u]; }
+	bool isAncestor(int top, int bottom) { return lca(top, bottom) == top; }
+	bool sameBranch(int top, int bottom) { int l = lca(top, bottom); return l == top || l == bottom; }
 
-private:
-	int _la(int u, int d)const{for(int i=0;i<logN&&u!=-1;++i){if(d&(1<<i))u=PP[i][u];}return u;}
+		int _la(int u, int d)const{for(int i=0;i<logN&&u!=-1;++i){if(d&(1<<i))u=PP[i][u];}return u;}
 	int _lca(int u, int v) { if(D[u]<D[v]){swap(u,v);} u=_la(u,D[u]-D[v]);
 		for(int i=logN-1;i>=0;--i)if(PP[i][u]!=PP[i][v]){u=PP[i][u];v=PP[i][v];}
 		return u==v?u:PP[0][v];
@@ -82,7 +83,7 @@ struct DirectedGraph {
 	int stronglyConnectedComponent(int v){calcStronglyConnectedComponents();return SCC[v];}
 	bool stronglyConnected(int u,int v){calcStronglyConnectedComponents();return SCC[u]==SCC[v];}
 	const vector<int>& stronglyConnectedPermutation() {calcStronglyConnectedComponents(); return O;}
-private:
+//private:
 	inline void calcReverseEdges(){if(ER.size()==N){return;}ER.resize(N);for(int i=0;i<N;++i)for(int u:E[i])ER[u].push_back(i);}
 	inline void calcStronglyConnectedComponents(){
 		if(SCC.size()==N){return;}SCC.resize(N);O.resize(N);calcReverseEdges();

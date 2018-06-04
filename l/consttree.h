@@ -24,5 +24,5 @@ private:
     vector<ui> L;
 };
 
-template <typename F> struct MinOp { F operator()(F a, F b) const { return std::min(a,b); }};
-template <typename F> struct MaxOp { F operator()(F a, F b) const { return std::max(a,b); }};
+template <typename F> struct MinQOp { F operator()(F a, F b) const { return std::min(a,b); }};
+template <typename F> struct MaxQOp { F operator()(F a, F b) const { return std::max(a,b); }};

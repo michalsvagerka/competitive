@@ -1,0 +1,26 @@
+Convex hull trick / lower / upper envelope
+==========================================
+
+Implemented in util.h
+
+Goal:
+====
+Given set of linear functions y = a_i * x + b_i, find the set of functions that can be the minimum.
+
+Algorithm:
+==========
+1. Remove duplicates
+2. Sort by decreasing a_i and decreasing b_i.
+3. Maintain S = solution (ordered)
+4. Upon adding L = (a_i, b_i)
+    a) if the S[-1] has the same a_i => remove S[-1]
+    b) if intersection of (S[-2] x L) is to the left of (S[-1] x L), remove S[-1]
+    c) repeat b) until false, or only one element left
+    d) insert L into S
+5. Output S
+
+Notes:
+======
+- We can binsearch on the intersection coordinate to find value of f(y) = min_i a_i x + b_i
+- Sorting on b_i is not needed, if the check is 4a) is both ways
+- O(n log n) for sorting + O(n) for building

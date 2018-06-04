@@ -1,6 +1,5 @@
 #include "../l/lib.h"
 // #include "../l/mod.h"
-#include <thread>
 
 class %ClassName% {
 public:
@@ -16,30 +15,19 @@ public:
 
         void write(ostream &cout) {
             // TODO: output here
-            cout << endl;
+            cout << '\n';
         }
     };
 
 
     void solve(istream& cin, ostream& cout) {
         ui T; cin >> T;
-		vector<Calc> C(T);
-		for (auto &c: C) c.read(cin);
-
-		std::atomic_int currentTest{0};
-		vector<std::thread> threads;
-		for (ui i = 0; i < 4; ++i) {
-			threads.emplace_back(std::thread{[&]() mutable {
-				int testId;
-				while ((testId = currentTest++) < T) C[testId].calc();
-			}});
-		}
-
-		for (auto & t : threads) t.join();
-
-		for (int t = 0; t < T; ++t) {
-            cout << "Case #" << t+1 << ": ";
-			C[t].write(cout);
-		}
-	}
+        for (int t = 1; t <= T; ++t) {
+            Calc c;
+            c.read(cin);
+            c.calc();
+            cout << "Case #" << t << ": ";
+            c.write(cout);
+        }
+    }
 };

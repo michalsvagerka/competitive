@@ -2,7 +2,7 @@
 class Fraction {
     friend ostream& operator<<(ostream& os, const Fraction& f);
 public:
-    Fraction(ll u, ll v = 1) : u(u), v(v) { norm(); }
+    Fraction(ll u = 0, ll v = 1) : u(u), v(v) { norm(); }
     bool operator==(const Fraction & o) const { return u == o.u && v == o.v; }
     bool operator!=(const Fraction & o) const { return u != o.u || v != o.v; }
     bool operator<(const Fraction &o) const { return u*o.v < o.u*v; }
@@ -24,7 +24,6 @@ private:
         ll g = gcd(abs(u),abs(v));
         u /= g;
         v /= g;
-        if (v < 0) { u = -u; v = -v; }
         return *this;
     }
 

@@ -80,3 +80,4 @@ template<typename T> using XorTree = SegTree<T, AddOp<T>, Lazy<T, InverseOp<T>, 
 
 template<typename T> using SetMinTree = SegTree<T, MinOp<T>>;
 template<typename T> using SetMaxTree = SegTree<T, MaxOp<T>>;
+template<typename T> using SetMulTree = SegTree<T, MultiplyOp<T>>;
