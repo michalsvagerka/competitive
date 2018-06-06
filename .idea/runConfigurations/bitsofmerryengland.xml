@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="bitsofmerryengland" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="bitsofmerryengland" cppPath="tasks/bitsofmerryengland.cpp" inputType="STANDARD" inputFile="input.txt" outputType="STANDARD" outputFile="output.txt" testType="SINGLE">
+    <tests>
+      <test input="7 2&#10;1 2 2 4 2 1 2&#10;" output="11 4&#10;b=1&#10;print(b)&#10;a=2&#10;print(a)&#10;print(a)&#10;b=4&#10;print(b)&#10;print(a)&#10;b=1&#10;print(b)&#10;print(a)&#10;" active="true" />
+      <test input="6 3&#10;1 2 3 1 2 3&#10;" output="9 4&#10;c=1&#10;print(c)&#10;b=2&#10;print(b)&#10;a=3&#10;print(a)&#10;print(c)&#10;print(b)&#10;print(a)&#10;" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

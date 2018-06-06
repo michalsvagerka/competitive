@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="buildstring" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="buildstring" cppPath="tasks/buildstring.cpp" inputType="STANDARD" inputFile="input.txt" outputType="STANDARD" outputFile="output.txt" testType="SINGLE">
+    <tests>
+      <test input="bbaze&#10;3&#10;bzb 2&#10;aeb 3&#10;ba 10&#10;" output="8&#10;" active="true" />
+      <test input="abacaba&#10;4&#10;aba 2&#10;bcc 1&#10;caa 2&#10;bbb 5&#10;" output="18" active="true" />
+      <test input="xyz&#10;4&#10;axx 8&#10;za 1&#10;efg 4&#10;t 1&#10;" output="-1" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

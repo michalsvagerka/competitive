@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="elephantandtree" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="elephantandtree" cppPath="tasks/elephantandtree.cpp" inputType="STANDARD" outputType="STANDARD" testType="SINGLE">
+    <tests>
+      <test input="5 1&#10;1 2&#10;1 3&#10;3 5&#10;3 4&#10;2 3&#10;" output="0 3 3 3 3 " active="true" />
+      <test input="11 3&#10;1 2&#10;2 3&#10;2 4&#10;1 5&#10;5 6&#10;5 7&#10;5 8&#10;6 9&#10;8 10&#10;8 11&#10;2 9&#10;3 6&#10;2 8&#10;" output="0 6 7 6 0 2 0 5 4 5 5 " active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

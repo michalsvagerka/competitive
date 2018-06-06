@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="grippingstory" type="name.admitriev.jhelper.configuration.TaskConfigurationType" factoryName="Task" className="grippingstory" cppPath="tasks/grippingstory.cpp" inputType="STANDARD" outputType="STANDARD" testType="SINGLE">
+    <tests>
+      <test input="0 0 5 10 5&#10;5 4 7 11 5&#10;-7 1 4 7 8&#10;0 2 13 5 6&#10;2 -3 9 3 4&#10;13 5 1 9 9&#10;" output="3&#10;" active="true" />
+      <test input="0 0 5 3 2&#10;3 0 1 2 2&#10;3 1 1 2 2" output="1" active="true" />
+    </tests>
+    <method />
+  </configuration>
+</component>

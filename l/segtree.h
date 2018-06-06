@@ -1,12 +1,12 @@
 #include "lib.h"
 
-template<typename F>struct NoOp{void setup(ui){}void op(F&p,F n,ui,ui){p=n;}void down(F&,F&,F&,ui,ui) {}};
+template<typename F>struct NoOp{void setup(ui, F){}void op(F&p,F n,ui,ui){p=n;}void down(F&,F&,F&,ui,ui) {}};
 
 template<typename F,typename SetOp,typename PowerOp>struct Lazy{
-    void setup(ui s){this->s=s;L=new F[s]();}
-    void down(F&u,F&l,F&r,ui i,ui s){op(l,L[i],i<<1,s>>1);op(r,L[i],i<<1|1,s>>1);L[i]=0;}
+    void setup(ui s,F def){this->def=def;this->s=s;L=new F[s]();fill(L,L+s,def);}
+    void down(F&u,F&l,F&r,ui i,ui s){op(l,L[i],i<<1,s>>1);op(r,L[i],i<<1|1,s>>1);L[i]=def;}
     void op(F&p,F n,ui i,ui s){p=sop(p,pop(n,s));if(i<this->s)this->L[i]=sop(this->L[i],n);}
-    SetOp sop;PowerOp pop;F*L;ui s;
+    SetOp sop;PowerOp pop;F*L;ui s;F def;
 };
 
 template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct SegTree {
@@ -14,7 +14,7 @@ template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct Se
 		n = 1<<logceil(s);
 		T = vector<F>(2*n, def);
 		for (ui i = n-1; i > 0; i--) T[i] = cop(T[i<<1],T[i<<1|1]);
-		mop.setup(2*n);
+		mop.setup(2*n,def);
 	}
 
 	void setup(vector<F> & data, F def = F()) {
@@ -22,7 +22,7 @@ template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct Se
 		T = vector<F>(2*n, def);
 		copy(data.begin(), data.end(), T.begin() + n);
 		for (ui i = n-1; i > 0; i--) T[i] = cop(T[i<<1],T[i<<1|1]);
-		mop.setup(2*n);
+		mop.setup(2*n,def);
 	}
 
 	inline void put(ui x, F n) { put(x, x, n); }
