@@ -5,10 +5,10 @@
 // MIN-COST MAX-FLOW ALGORITHM. LOOK ELSEWHERE
 template<typename T> struct MinCostMaxFlow {
     ui V, E;
-    std::vector<ui> LastEdge, EdgeToProcess, BfsDistance, PrevEdge, EdgeTarget;
-    std::vector<T> Capacity, Residual, Cost;
+    std::vector<ui> LastEdge, Parent, PrevEdge, EdgeTarget;
+    std::vector<T> Capacity, Residual, Cost, Distance;
 
-    MinCostMaxFlow(ui v, ui e = 0) : V(v), E(0), LastEdge(V, ui(-1)), BfsDistance(V), EdgeToProcess(V) {
+    MinCostMaxFlow(ui v, ui e = 0) : V(v), E(0), LastEdge(V, ui(-1)), Parent(V), Distance(V) {
         Capacity.reserve(2*e);
         Residual.reserve(2*e);
         EdgeTarget.reserve(2*e);
@@ -31,36 +31,53 @@ template<typename T> struct MinCostMaxFlow {
         LastEdge[y] = E++;
     }
 
-    pair<T,T> push(ui source, ui sink) {
-        minheap<pair<T,ui>> Q;
-        vector<ui> ParentEdge(V, -1);
-        vector<T> Distance(V, std::numeric_limits<T>::max());
-        Q.push({0,source});
+    void bellman(ui source) {
+        fill(Parent.begin(),Parent.end(),ui(-1));
+        fill(Distance.begin(),Distance.end(),std::numeric_limits<T>::max()/4);
         Distance[source] = 0;
-        while (!Q.empty()) {
-            ui u = Q.top().y;
-            T d = Q.top().x;
-            Q.pop();
-            if (u == sink) break;
-            if (Distance[u] != d) continue;
-            for (ui e = LastEdge[u]; e != -1; e = PrevEdge[e]) {
-                int v = EdgeTarget[e];
-                if (Residual[e] > 0 && Distance[v] > d + Cost[e]) {
-                    Distance[v] = d + Cost[e];
-                    ParentEdge[v] = e;
-                    Q.push({Distance[v], v});
+        int ch = 1;
+        while (ch--) {
+            for (ui e = 0; e < E; ++e) {
+                if (Residual[e] > 0) {
+                    ui u = EdgeTarget[e^1], v = EdgeTarget[e];
+                    if (Distance[u] + Cost[e] < Distance[v]) {
+                        Distance[v] = Distance[u] + Cost[e];
+                        Parent[v] = e;
+                        ch = 1;
+                    }
                 }
             }
         }
-        
-        if (Distance[sink] == std::numeric_limits<T>::max()) return {0,0};
+    }
+
+    pair<T,T> push(ui source, ui sink) {
+        bellman(source);
+//        Q.push({0,source});
+//        Distance[source] = 0;
+//        while (!Q.empty()) {
+//            ui u = Q.top().y;
+//            T d = Q.top().x;
+//            Q.pop();
+//            if (u == sink) break;
+//            if (Distance[u] != d) continue;
+//            for (ui e = LastEdge[u]; e != -1; e = PrevEdge[e]) {
+//                int v = EdgeTarget[e];
+//                if (Residual[e] > 0 && Distance[v] > d + Cost[e]) {
+//                    Distance[v] = d + Cost[e];
+//                    Parent[v] = e;
+//                    Q.push({Distance[v], v});
+//                }
+//            }
+//        }
+
+        if (Distance[sink] == std::numeric_limits<T>::max()/4) return {0,0};
         T flow = std::numeric_limits<T>::max(), cost = 0;
-        for (ui e = ParentEdge[sink]; e != -1; e = ParentEdge[EdgeTarget[e^1]]) {
+        for (ui e = Parent[sink]; e != -1; e = Parent[EdgeTarget[e^1]]) {
             cost += Cost[e];
             flow = min(flow, Residual[e]);
         }
 
-        for (ui e = ParentEdge[sink]; e != -1; e = ParentEdge[EdgeTarget[e^1]]) {
+        for (ui e = Parent[sink]; e != -1; e = Parent[EdgeTarget[e^1]]) {
             Residual[e] -= flow;
             Residual[e^1] += flow;
         }
@@ -69,6 +86,10 @@ template<typename T> struct MinCostMaxFlow {
     }
 
     pair<T,T> GetMaxFlow(int u, int v) {
+        bellman(u);
+        T piSink = Distance[v];
+        for (int e = 0; e < E; e++) Cost[e] += Distance[EdgeTarget[e^1]] - Distance[EdgeTarget[e]];
+
         pair<T,T> ret = {0,0};
         while (true) {
             pair<T,T> f = push(u, v);
@@ -77,6 +98,7 @@ template<typename T> struct MinCostMaxFlow {
             ret.y += f.y;
         }
 
+        ret.y += ret.x * piSink;
         return ret;
     }
 
