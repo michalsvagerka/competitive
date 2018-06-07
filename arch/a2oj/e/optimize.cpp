@@ -1,5 +1,5 @@
-#include "../l/lib.h"
-#include "../l/segtree.h"
+#include "../../../l/lib.h"
+#include "../../../l/segtree.h"
 
 class optimize {
 public:

@@ -1,5 +1,5 @@
-#include "../l/lib.h"
-#include "../l/suffixarray.h"
+#include "../../../l/lib.h"
+#include "../../../l/suffixarray.h"
 
 class littleelephantandstrings {
 public:

@@ -1,5 +1,5 @@
-#include "../l/lib.h"
- #include "../l/mod.h"
+#include "../../../l/lib.h"
+ #include "../../../l/mod.h"
 
 class serejaandsets {
 public:

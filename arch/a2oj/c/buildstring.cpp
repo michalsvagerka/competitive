@@ -1,5 +1,5 @@
-#include "../l/lib.h"
- #include "../l/mincostmaxflow.h"
+#include "../../../l/lib.h"
+ #include "../../../l/mincostmaxflow.h"
 
 class buildstring {
 public:
