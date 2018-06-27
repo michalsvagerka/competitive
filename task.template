@@ -3,7 +3,7 @@
 
 class %ClassName% {
 public:
-    void solve(istream& cin, ostream& cout) {
+void solve(istream& cin, ostream& cout) {
 
-    }
+}
 };

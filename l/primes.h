@@ -11,7 +11,7 @@ struct Sieve : public std::vector<bool> {
     // ~10ns * n
 	explicit Sieve(ui n) : vector<bool>(n+1, true), n(n) {
 		at(0) = false;
-		at(1) = false;
+		if (n!=0) at(1) = false;
 		for (ui i = 2; i*i <= n; ++i) {
 			if (at(i)) for (int j = i*i; j <= n; j+=i) (*this)[j] = false;
 		}

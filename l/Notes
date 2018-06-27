@@ -24,3 +24,7 @@ Notes:
 - We can binsearch on the intersection coordinate to find value of f(y) = min_i a_i x + b_i
 - Sorting on b_i is not needed, if the check is 4a) is both ways
 - O(n log n) for sorting + O(n) for building
+
+Tasks:
+======
+tavasandpashmaks, iglooskyscraper
