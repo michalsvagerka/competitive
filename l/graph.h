@@ -4,8 +4,8 @@
 struct Tree {
 	explicit Tree(int N=1) : N(N), logN(logceil(N)), _root(0), E(N) {}
 	void addEdge(int u,int v){E[u].push_back(v);E[v].push_back(u);}
-	int la(int u, int depth){calcLA();return _la(u,depth);}
-	int lca(int u, int v){calcLA();return _lca(u,v);}
+	int la(int u, int depth){/*calcLA();*/return _la(u,depth);}
+	inline int lca(int u, int v){/*calcLA();*/return _lca(u,v);}
 	int parent(int u) { return P[u]; }
 	void setRoot(int r) { _root = r; }
 	int root() { return _root; }
@@ -14,7 +14,7 @@ struct Tree {
 	bool isAncestor(int top, int bottom) { return lca(top, bottom) == top; }
 	bool sameBranch(int top, int bottom) { int l = lca(top, bottom); return l == top || l == bottom; }
 
-		int _la(int u, int d)const{for(int i=0;i<logN&&u!=-1;++i){if(d&(1<<i))u=PP[i][u];}return u;}
+	int _la(int u, int d)const{for(int i=0;i<logN&&u!=-1;++i){if(d&(1<<i))u=PP[i][u];}return u;}
 	int _lca(int u, int v) { if(D[u]<D[v]){swap(u,v);} u=_la(u,D[u]-D[v]);
 		for(int i=logN-1;i>=0;--i)if(PP[i][u]!=PP[i][v]){u=PP[i][u];v=PP[i][v];}
 		return u==v?u:PP[0][v];
@@ -101,7 +101,7 @@ struct TwoSat {
 	void addClause(int u,bool w,int v,bool x){G.addEdge(u+N*w,v+N*(1-x));G.addEdge(v+N*x,u+N*(1-w));}
 	bool satisfiable() {calculateAssignment();return ok;}
 	const vector<int>& assignment() {calculateAssignment();return A;}
-private:
+//private:
 	inline void calculateAssignment(){if(A.size()==N){return;}A.resize(N);ok=true;map<int,bool>Q;
 		for(int u:G.stronglyConnectedPermutation()){
 			int c1=G.stronglyConnectedComponent(u),c2=G.stronglyConnectedComponent((u+N)%(2*N));
