@@ -96,7 +96,7 @@ public:
     }
 
     Num(long long i): neg(i < 0) {
-        for (unsigned u = std::abs(i); u;){
+        for (unsigned long long u = std::abs(i); u;){
             push_back(u);
             for (size_t j = 0; j < word_bits(); j++) u >>= 1;
         }

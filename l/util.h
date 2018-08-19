@@ -1,3 +1,6 @@
+#ifndef UTIL_H
+#define UTIL_H
+
 #include "lib.h"
 
 template <typename T> struct bounded_priority_queue {
@@ -17,6 +20,7 @@ struct 	UnionFind {
 	int find(int x) { while (P[x]> 0){x = P[x]-1;}return x; }
 	bool united(int x, int y) { return find(x) == find(y); }
 	bool unite(int x, int y) { x=find(x);y=find(y);if(x==y){return false;}--comp;if(P[x]>P[y]){swap(x,y);}P[x]+=P[y];P[y]= x+1;return true;}
+	inline ui size(int u) { return -P[find(u)]; }
 	vector<int> P;
 	size_t comp;
 };
@@ -150,8 +154,15 @@ namespace LinearEnvelope {
 
 		Upper() : t(0), i(0) {}
 
+		void clear() {
+		    parent::clear();
+		    i = 0;
+		    t = 0;
+		}
+
 		void insert_line(T m, T b, int i = 0) {
 			assert(t == 0);
+			if (size() > 0 && back().m == m && back().b >= b) return;
 			while (size() > 0 && ((back().b < b) || (back().b == b && back().m < m))) parent::pop_back();
 			while (size() >= 2 && fractionGreaterOrEqual(at(size()-2).b - back().b, back().m - at(size()-2).m, back().b - b, m - back().m)) parent::pop_back();
 			parent::push_back({m,b,i});
@@ -164,3 +175,5 @@ namespace LinearEnvelope {
 			return {at(i).m * t + at(i).b, at(i).id};
 		}
 	};};
+
+#endif

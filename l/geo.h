@@ -145,15 +145,26 @@ template <typename T> struct Polygon : public vector<Point<T>> {
 
 template <typename T> Polygon<T> convexhull(const vector<Point<T>> &v) {
     ui N = (ui)v.size(); vector<Point<T>> w(N+1); int lo = 0;
-    for (int i = 0; i<N; ++i) if (v[i].y < v[lo].y) lo = i;
+    for (int i = 0; i<N; ++i) if (v[i].y < v[lo].y || (v[i].y == v[lo].y && v[i].x < v[lo].x)) lo = i;
     Point<T> o = v[lo];
     for (int i = 0; i<N; ++i) w[i+1] = {v[i].x-o.x,v[i].y-o.y};
     swap(w[1],w[lo+1]);
+
+//    sort(w.begin()+2,w.end(),[](Point<T>&a,Point<T>&b) {
+//        if (a.y==0&&a.x>0) return true;
+//        if (b.y==0&&b.x>0) return false;
+//        if (a.y>0&&b.y<0) return true;
+//        return !(a.y<0&&b.y>0) && (a.x*b.y-a.y*b.x)>0;
+//    });
+
     sort(w.begin()+2,w.end(),[](Point<T>&a,Point<T>&b) {
-        if (a.y==0&&a.x>0) return true;
-        if (b.y==0&&b.x>0) return false;
-        if (a.y>0&&b.y<0) return true;
-        return !(a.y<0&&b.y>0) && (a.x*b.y-a.y*b.x)>0;
+        if (a.y==0&&b.y==0) return a.x<b.x;
+        if (a.y==0) return true;
+        if (b.y==0) return false;
+        auto disc = (a.x*b.y-a.y*b.x);
+        if (disc>0) return true;
+        if (disc<0) return false;
+        return a.y < b.y;
     });
     w[0] = w[N];
     ui M=1;

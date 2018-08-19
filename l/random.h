@@ -3,10 +3,14 @@
 
 #include <random>
 #include <chrono>
-//seed_seq seed{(ll)std::random_device{}(), std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()};
- seed_seq seed{12};
-std::mt19937 rng{seed};
+auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+std::mt19937 rng(seed);
 using random_int = std::uniform_int_distribution<int>;
 using random_ll = std::uniform_int_distribution<ll>;
+struct TimeLimit {
+    TimeLimit(double seconds) : s(seconds-0.1), last(clock()), mx(0) {}
+    operator bool() const { clock_t cur = clock(); mx = max(mx, cur-last); last = cur; return clock() < s * CLOCKS_PER_SEC - 1.5 * mx; }
+    double s; mutable clock_t last, mx;
+};
 
 #endif //MAJK_RANDOM_H
