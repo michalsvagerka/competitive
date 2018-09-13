@@ -15,17 +15,9 @@ public:
     std::vector<word> words;
     bool neg;
 
-    static word word_mask(){
-        return (word)-1;
-    }
-
-    static size_t word_bits(){
-        return sizeof(word)*CHAR_BIT;
-    }
-
-    static word word_half_mask(){
-        return word_mask() >> word_bits()/2;
-    }
+    static word word_mask(){ return (word)-1; }
+    static size_t word_bits(){ return sizeof(word)*CHAR_BIT; }
+    static word word_half_mask(){ return word_mask() >> word_bits()/2; }
 
     static word char_to_word(char c){
         switch (c){
@@ -114,42 +106,15 @@ public:
         }
     }
 
-    void resize(size_t n){
-        words.resize(n);
-    }
-
-    void pop_back(){
-        words.pop_back();
-    }
-
-    void push_back(word b){
-        words.push_back(b);
-    }
-
-    word& back(){
-        return words.back();
-    }
-
-    const word& back() const {
-        return words.back();
-    }
-
-    size_t size() const {
-        return words.size();
-    }
-
-    word& operator [] (size_t i){
-        return words[i];
-    }
-
-    const word& operator [] (size_t i) const {
-        return words[i];
-    }
-
-    Num& set_neg(bool neg){
-        this->neg = neg;
-        return *this;
-    }
+    void resize(size_t n){ words.resize(n); }
+    void pop_back(){ words.pop_back(); }
+    void push_back(word b){ words.push_back(b); }
+    word& back(){ return words.back(); }
+    const word& back() const { return words.back(); }
+    size_t size() const { return words.size(); }
+    word& operator [] (size_t i){ return words[i]; }
+    const word& operator [] (size_t i) const { return words[i]; }
+    Num& set_neg(bool neg) { this->neg = neg; return *this; }
 
     Num& truncate(){
         while (size() > 0 && words.back() == 0) pop_back();
@@ -461,7 +426,7 @@ public:
 
     typedef void (*random_func)(uint8_t *bytes, size_t n_bytes);
 
-    static Num random_bits(size_t n_bits, random_func func){
+    static Num random_bits(size_t n_bits, random_func func) {
         if (n_bits == 0) return 0;
         size_t partial_bits = n_bits % word_bits();
         size_t n_words = n_bits / word_bits() + (partial_bits > 0);
@@ -643,5 +608,9 @@ public:
     Num operator >> (size_t n_bits) const { return Num(*this) >>= n_bits; }
     Num operator << (size_t n_bits) const { return Num(*this) <<= n_bits; }
 };
+
+std::istream &operator>>(std::istream& is, Num& N) { std::string S; is >> S; Num tmp{S}; swap(N, tmp); return is; }
+std::ostream &operator<<(std::ostream& os, const Num& N) { N.print(os); return os; }
+Num gcd(const Num &a0, const Num &b0) { return Num::gcd(a0, b0); }
 
 #endif

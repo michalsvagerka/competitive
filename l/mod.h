@@ -44,13 +44,14 @@ template<unsigned int N>Field<N> operator/(int i,const Field<N>&f){return Field<
 typedef Field<1000000007> FieldMod;
 
 struct Ring {
-	static ll div(ll p, ll q, ll N) {
-		ll t=0,nt=1,r=N,nr=q;
-		while(nr){ ll q=r/nr;t-=q*nt;r-=q*nr;swap(t,nt);swap(r,nr); }
+	template <typename T>
+	static T div(T p, T q, T N) {
+		T t=0,nt=1,r=N,nr=q;
+		while(nr!=0){ T q=r/nr;t-=q*nt;r-=q*nr;swap(t,nt);swap(r,nr); }
 		t=(t<0)?t+N:t;
 		r=(r<0)?r+N:r;
-		if (gcd(p,N)%r) { return 0; }
-		return ((ll)t*(ll)p/r)%N;
+		if (gcd(p,N)%r!=0) { return 0; }
+		return (t*p/r)%N;
 	}
 };
 #endif
