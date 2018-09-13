@@ -30,6 +30,7 @@ public:
 
 	void removeColumnsLeft(size_t rem) {
 		for (size_t i = 0; i < R; ++i) A[i].erase(A[i].begin(), rem > A[i].size() ? A[i].end() : A[i].begin()+rem);
+		C -= rem;
 	}
 
 	T determinant() const {
