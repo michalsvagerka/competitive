@@ -36,7 +36,7 @@ int main() {
 	std::cout << std::fixed;
 	double maxTime = 0.0;
 	for(const jhelper::Test& test: tests ) {
-		std::cout << "Test #" << ++testID << ":";
+		std::cout << "Test #" << testID++ << ":";
 		if (test.active) {
 			std::stringstream in(test.input);
 			std::ostringstream out;
@@ -53,7 +53,7 @@ int main() {
 				    std::cout << " OK (" << currentTime << "s)" << std::endl;
 				} else {
 				    std::cout << " WA (" << currentTime << "s)" << std::endl;
-			        std::cout << "Input: \n" << test.input << std::endl;
+			        std::cout << "Input: \n" << test.input.substr(0, 1000) << std::endl;
                     std::cout << "Expected output: \n" << test.output << std::endl;
 				    std::cout << "Actual output: \n" << out.str() << std::endl;
 				}

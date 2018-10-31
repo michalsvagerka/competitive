@@ -13,7 +13,7 @@ public:
     inline Field(int x = 0) : v(x) {}
 	inline Field<N> pow(int p){return (*this)^p; }
 	inline Field<N> operator^(int p){return {(int)pow(v,(ui)p)};}
-    inline Field<N>&operator+=(const Field<N>&o) {if ((ll)v+o.v >= N) v += o.v - N; else v += o.v; return *this; }
+    inline Field<N>&operator+=(const Field<N>&o) {if (v+o.v >= N) v += o.v - N; else v += o.v; return *this; }
     inline Field<N>&operator-=(const Field<N>&o) {if (v<o.v) v -= o.v-N; else v-=o.v; return *this; }
     inline Field<N>&operator*=(const Field<N>&o) {v=(ull)v*o.v % N; return *this; }
     inline Field<N>&operator/=(const Field<N>&o) { return *this*=inv(o.v); }

@@ -1,5 +1,3 @@
-#include "../l/dinic.h"
-
 // ordinary rooted tree with level ancestry and LCA. look elsewhere
 struct Tree {
 	explicit Tree(int N=1) : N(N), logN(logceil(N)), _root(0), E(N) {}
@@ -26,6 +24,107 @@ struct Tree {
 	int N,logN,_root; vector<vector<int>> E;vector<int> P,D;vector2<int>PP;
 };
 
+template <typename EdgeType>
+class DFSOrder {
+public:
+    DFSOrder(const vector<vector<EdgeType>> &_E) : T(0), N(_E.size()), E(_E), RevEnter(N), Enter(N), Exit(N) {
+        dfs(0, -1);
+    }
+
+    vector<vector<EdgeType>> linearize() {
+        vector<vector<EdgeType>> F(N);
+        for (int i = 0; i < N; ++i) {
+            for (auto v:E[i]) {
+                F[conv(i)].push_back(conv(v));
+            }
+        }
+        return F;
+    }
+
+    void dfs(int u, int p) {
+        RevEnter[T] = u;
+        Enter[u] = T++;
+        for (auto v:E[u]) if (t(v) != p) dfs(t(v), u);
+        Exit[u] = T;
+    }
+
+    inline int t(const int&e) const { return e; }
+    template <typename U> inline int t(const pair<int, U>&e) const { return e.x; }
+
+    inline int conv(const int&e) const { return Enter[e]; }
+    template <typename U> inline pair<int, U> conv(const pair<int, U>&e) const { return {Enter[e.x], e.y}; }
+
+    const vector<int> &revEnter() const { return RevEnter; }
+    const vector<int> &enter() const { return Enter; }
+    const vector<int> &exit() const { return Exit; }
+
+    int T, N;
+    const vector<vector<EdgeType>> &E;
+    vector<int> Enter, Exit, RevEnter;
+};
+
+/** Centroid decomposition.
+ *
+ * Input: graph as adjacency list (either int or pair<int,T>)
+ * Output: array U of intergers of size |V|
+ *
+ * Here, U[v] is the bfs order in the centroid tree. For DFS, only process
+ * vertices with higher U[w] when processing centroid v, for instance:
+ *
+ * void dfs(int u, int p, int ctr, ...) {
+ *      ....
+ *      for (int v:E[u]) {
+ *          if (v != p && U[u] > U[ctr]) {
+ *              dfs(v, u, ctr, ...);
+ *          }
+ *      }
+ * }
+ */
+template <typename EdgeType>
+class CentroidDecomposition {
+public:
+    CentroidDecomposition(const vector<vector<EdgeType>> &E) : E(E) {}
+
+    const vector<int>& findCentroids() {
+        N = E.size(); U.assign(N, -1);
+        int L = 0;
+
+        for (int j = 0; j < N; ) {
+            for (int i = N-1; i >= 0; --i) {
+                if (U[i] >= 0) continue;
+
+                U[i] = -1;
+                bool root = true;
+                for (auto v:E[i]) {
+                    if (U[t(v)]<0) {
+                        if (t(v) > i) U[i] += U[t(v)];
+                        else root = false;
+                    }
+                }
+
+                if (root) {
+                    int n = -U[i], u = i, p = -1;
+                    while (true) {
+                        int s = n + U[u];
+                        for (auto v:E[u]) if (t(v)!=p && U[t(v)] < 0) s = max(s, -U[t(v)]);
+                        if (2 * s <= n) { U[u] = j++; break; }
+                        else { for (auto v:E[u]) if (t(v)!=p && -U[t(v)] > n / 2) { p = u;u = t(v);break; } }
+                    }
+                }
+            }
+        }
+        return U;
+    }
+
+    inline int t(const int&e) const { return e; }
+    template <typename U> inline int t(const pair<int, U>&e) const { return e.x; }
+
+    int N;
+    const vector<vector<EdgeType>> &E;
+    vector<int> U;
+};
+
+
 // ordinary bipartite graph, with max. matching, max. indep. set and min. vertex cover. look elsewhere
 struct Bipartite {
 	explicit Bipartite(ui A, ui B) : A(A), B(B), N(A+B), ms(-1), H(N,-1), used(A) {}
@@ -34,7 +133,7 @@ struct Bipartite {
 	int matched(int v){calcMatching();return M[v];}
 	vector<int>cover(){calcCover();vector<int>C;for(int i=0;i<N;++i){if(Z[i]!=(i<A))C.push_back(i);}return C;}
 	vector<int>indep(){calcCover();vector<int>I;for(int i=0;i<N;++i){if(Z[i]==(i<A))I.push_back(i);}return I;}
-private:
+//private:
 	void konigDfs(int u){
         if(Z[u]){return;}
         Z[u]=true;
