@@ -1,4 +1,6 @@
 #include "lib.h"
+#include "random.h"
+#include "int128.h"
 
 constexpr double PI = 3.14159265358979323846;
 template <typename T> struct Segment;
@@ -99,26 +101,79 @@ template <typename T> struct Line : public pair<Point<T>,Point<T>> {
             double y = -(-l.dy() * c1 + c2 * dy()) / det;
             return {x, y};
         }
-
     };
 };
 
+template <typename T> T cramer(const std::array<T, 9> &X) {
+    return X[0] * X[4] * X[8] + X[1] * X[5] * X[6] + X[2] * X[3] * X[7] - X[0] * X[5] * X[7] - X[1] * X[3] * X[8] - X[2] * X[4] * X[6];
+}
+
+
 template <typename T> struct Circle {
     Point<T> center;
-    T radius;
+    T sqRadius;
 
-    bool intersect(const Circle<T>&o) const {
-        return o.center.squaredDistance(center) <= (radius+o.radius)*(radius+o.radius);
-    }
+
     bool contains(const Point<T>&p) const {
-        return p.squaredDistance(center) <= radius*radius;
+        return p.squaredDistance(center) <= sqRadius;
     }
-    bool contains(const Circle<T>&o) const {
-        return radius>=o.radius && o.center.squaredDistance(center) <= (radius-o.radius)*(radius-o.radius);
+
+// Checking intersection of two circles be like
+/// sqrt(d) <= sqrt(a) + sqrt(b)
+/// d <= a + b + 2sqrt(ab)
+//  d - (a+b) <= 2sqrt(ab)
+//  (d - (a+b))^2 <= 4ab
+// but d, a & b are already squared distances, so this fits into ll only if coords <= 3e4
+// so for exactness, int128 is needed
+
+
+    //    bool intersect(const Circle<T>&o) const {
+//        return o.center.squaredDistance(center) <= (radius+o.radius)*(radius+o.radius);
+//    }
+//    bool contains(const Circle<T>&o) const {
+//        return radius>=o.radius && o.center.squaredDistance(center) <= (radius-o.radius)*(radius-o.radius);
+//    }
+//    bool touches(const Circle<T>&o) const {
+//        T dist = center.squaredDistance(o.center);
+//        return dist == (radius-o.radius)*(radius-o.radius) || dist == (radius+o.radius)*(radius+o.radius);
+//    }
+
+    Circle(const Point<T> &c, T r) : center(c), sqRadius(r) {}
+    explicit Circle(const Point<T> &p) : center(p), sqRadius(0) {}
+    explicit Circle(const Point<T> &a, const Point<T> &b) : center((a.x+b.x)/2, (a.y+b.y)/2), sqRadius(a.squaredDistance(b)/4) {}
+    explicit Circle(const Point<T> &a, const Point<T> &b, const Point<T> &c) {
+        T la = a.squaredDistance({0,0}), lb = b.squaredDistance({0,0}), lc = c.squaredDistance({0,0});
+        T x = cramer<T>({ la, a.y, 1, lb, b.y, 1, lc, c.y, 1 }) / 2;
+        T y = cramer<T>({ a.x, la, 1, b.x, lb, 1, c.x, lc, 1 }) / 2;
+        T s = cramer<T>({ a.x, a.y, 1, b.x, b.y, 1, c.x, c.y, 1 });
+        center.x = x / s;
+        center.y = y / s;
+        sqRadius = center.squaredDistance(a);
     }
-    bool touches(const Circle<T>&o) const {
-        T dist = center.squaredDistance(o.center);
-        return dist == (radius-o.radius)*(radius-o.radius) || dist == (radius+o.radius)*(radius+o.radius);
+
+    static Circle minimumEnclosing(vector<Point<T>> p, bool randomize = true) {
+        if (randomize) shuffle(p.begin(), p.end(), rng);
+        vector<Point<T>> V;
+        return welzl(p.begin(), p.end(), V);
+    }
+
+private:
+    static Circle welzl(typename vector<Point<T>>::const_iterator it, typename vector<Point<T>>::const_iterator itend, vector<Point<T>> &p) {
+        if (it == itend || p.size() == 3) {
+            if (p.size() == 1) return Circle{p[0]};
+            else if (p.size() == 2) return Circle{p[0], p[1]};
+            else if (p.size() == 3) return Circle(p[0], p[1], p[2]);
+            else return {Point<T>{0,0}, 0};
+        } else {
+            Circle d = welzl(next(it), itend, p);
+            if (d.contains(*it)) return d;
+            else {
+                p.push_back(*it);
+                d = welzl(next(it), itend, p);
+                p.pop_back();
+                return d;
+            }
+        }
     }
 };
 
@@ -158,13 +213,10 @@ template <typename T> Polygon<T> convexhull(const vector<Point<T>> &v) {
 //    });
 
     sort(w.begin()+2,w.end(),[](Point<T>&a,Point<T>&b) {
-        if (a.y==0&&b.y==0) return a.x<b.x;
-        if (a.y==0) return true;
+        if (a.y==0) return b.y != 0 || a.x < b.x;
         if (b.y==0) return false;
         auto disc = (a.x*b.y-a.y*b.x);
-        if (disc>0) return true;
-        if (disc<0) return false;
-        return a.y < b.y;
+        return disc > 0 || (disc == 0 && a.y < b.y);
     });
     w[0] = w[N];
     ui M=1;
@@ -176,3 +228,4 @@ template <typename T> Polygon<T> convexhull(const vector<Point<T>> &v) {
     for (int i=0;i<M;++i) res[i] = {w[i+1].x+o.x,w[i+1].y+o.y};
     return res;
 }
+

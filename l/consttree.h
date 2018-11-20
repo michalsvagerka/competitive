@@ -4,7 +4,7 @@
  * Query O(1) */
 template <typename T, typename Op> class ConstTree {
 public:
-    explicit ConstTree(const vector<T>&V) : D(logceil(V.size())), N(V.size()), A{V}, L(N,0) {
+    explicit ConstTree(const vector<T>&V) : D(logceil(int(V.size()))), N(V.size()), A{V}, L(N,0) {
         for (ui b = 1; b < D; ++b) {
             A.emplace_back(N-(1<<b)+1);
             for (ui i = 0; i + (1<<b) <= N; ++i) {
@@ -12,6 +12,15 @@ public:
             }
         }
         for (ui i = 2; i < N; ++i) L[i] = L[i-1] + ((1<<L[i-1]) == i/2);
+    }
+    
+    void update(const vector<T>&V) {
+        A[0] = V;
+        for (ui b = 1; b < D; ++b) {
+            for (ui i = 0; i + (1<<b) <= N; ++i) {
+                A[b][i] = op(A[b-1][i], A[b-1][i+(1<<(b-1))]);
+            }
+        }
     }
 
     T get(ui i, ui j) const { //i,j is inclusive

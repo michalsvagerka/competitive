@@ -4,7 +4,7 @@
 #include <random>
 #include <chrono>
 auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
-std::mt19937 rng(12);
+std::mt19937 rng(seed);
 using random_int = std::uniform_int_distribution<int>;
 using random_ll = std::uniform_int_distribution<ll>;
 struct TimeLimit {

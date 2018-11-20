@@ -17,6 +17,7 @@
 #include <string>
 #include <sstream>
 #include <queue>
+#include <array>
 #include <bitset>
 using namespace std;
 
@@ -32,6 +33,7 @@ template<typename T> using minheap = priority_queue<T, vector<T>, greater<T>>;
 template<typename T> using maxheap = priority_queue<T, vector<T>, less<T>>;
 template <typename T> bool in(T a, T b, T c) { return a <= b && b < c; }
 ui logceil(int x) { return x?8*sizeof(int)-__builtin_clz(x):0; }
+ui logceil(ll x) { return x?8*sizeof(ll)-__builtin_clzll(x):0; }
 
 namespace std { template<typename T,typename U>struct hash<pair<T,U>>{hash<T>t;hash<U>u;size_t operator()(const pair<T,U>&p)const{return t(p.x)^(u(p.y)<<7);}}; }
 template<typename T,typename F>T bsh(T l,T h,const F&f){T r=-1,m;while(l<=h){m=(l+h)/2;if(f(m)){l=m+1;r=m;}else{h=m-1;}}return r;}
