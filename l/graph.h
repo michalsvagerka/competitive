@@ -194,18 +194,41 @@ struct DirectedGraph {
 	int N; vector<vector<int>>E,ER;vector<int>SCC,O;
 };
 
+
 struct TwoSat {
-	explicit TwoSat(int N=0) : N(N), G(2*N) {}
-	void forbid(int u,bool w){G.addEdge(u+N*(1-w),u+N*w);}
-	void addClause(int u,bool w,int v,bool x){G.addEdge(u+N*w,v+N*(1-x));G.addEdge(v+N*x,u+N*(1-w));}
-	bool satisfiable() {calculateAssignment();return ok;}
-	const vector<int>& assignment() {calculateAssignment();return A;}
-//private:
-	inline void calculateAssignment(){if(A.size()==N){return;}A.resize(N);ok=true;map<int,bool>Q;
-		for(int u:G.stronglyConnectedPermutation()){
-			int c1=G.stronglyConnectedComponent(u),c2=G.stronglyConnectedComponent((u+N)%(2*N));
-			if(c1==c2){ok=false;return;}if(Q.find(c1)==Q.end()){Q[c1]=true;Q[c2]=false;}}
-		for(int i=0;i<N;++i){A[i]=Q[G.stronglyConnectedComponent(i)];}
+	int N;
+	vector<int> val; vector<char> valid;
+	vector<vector<int>> G;
+
+	TwoSat(int N) : N(N), val(2*N), G(2*N) {}
+	void addImplication(int a, bool w, int b, bool x) { G[2*a+w].push_back(2*b+x); }
+	void addOr(int a, bool w, int b, bool x) { addImplication(a, !w, b, x); addImplication(b, !x, a, w); }
+	void addTrue(int x) { addImplication(x, false, x, true); }
+    void addFalse(int x) { addImplication(x, true, x, false); }
+	int time() { return valid.size()-1; }
+	bool dfs(int x) {
+		if(valid[abs(val[x])]) return val[x]>0;
+		val[x] = time();
+		val[x^1] = -time();
+		for(int e:G[x]) if(!dfs(e)) return false;
+		return true;
 	}
-	int N; DirectedGraph G;vector<int>A;bool ok;
+
+	bool value(int i) const { return val[2*i]<0; }
+
+	bool solve() {
+		fill(val.begin(), val.end(), 0);
+		valid.assign(1, 0);
+		for(int i=0; i<val.size(); i+=2) {
+			if(!valid[abs(val[i])]) {
+				valid.push_back(1);
+				if(!dfs(i)) {
+					valid.back()=0;
+					valid.push_back(1);
+					if(!dfs(i+1)) return false;
+				}
+			}
+		}
+		return true;
+	}
 };

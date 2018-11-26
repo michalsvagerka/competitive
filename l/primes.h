@@ -48,34 +48,34 @@ struct LargePrimes : public vector<int> {
 
 vector<int> SmallPrimes{2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,233,239,241,251,257};
 // 200ns-4us per call, depending on size
-bool isPrime(ll n) {
-    if (n==2) return true;
-    for (int p:SmallPrimes)
-        if (p<n&&n%p==0) return false;
-	ll d = n-1, r = 0;
-	while (d%2==0) { d/=2; r += 1; }
-	auto composite = [=](int a) {
-		ll x = 1, p = a, e = d;
-		while(e>0) { if(e%2>0){x=mulull(x,p,n);} e/=2; p=mulull(p,p,n); }
-		if (x == 1 || x == n-1) return false;
-        for (int i=1;i<r;++i) {
-            x=mulull(x,x,n);
-            if (x==1) return true;
-			if (x==n-1) return false;
-		}
-        return true;
-	};
-
-	return !(composite(2))
-		   && (n<2047 || !composite(3))
-		   && (n<1373653 || !composite(5))
-		   && (n<25326001 || !composite(7))
-		   && (n<3215031751LL || !composite(11))
-		   && (n<2152302898747LL || !composite(13))
-		   && (n<3474749660383LL || !composite(17))
-		   && (n<341550071728321LL || (!composite(19) && !composite(23)))
-		   && (n<3825123056546413051LL || (!composite(29) && !composite(31) && !composite(37)));
-}
+//bool isPrime(ll n) {
+//    if (n==2) return true;
+//    for (int p:SmallPrimes)
+//        if (p<n&&n%p==0) return false;
+//	ll d = n-1, r = 0;
+//	while (d%2==0) { d/=2; r += 1; }
+//	auto composite = [=](int a) {
+//		ll x = 1, p = a, e = d;
+//		while(e>0) { if(e%2>0){x=mulull(x,p,n);} e/=2; p=mulull(p,p,n); }
+//		if (x == 1 || x == n-1) return false;
+//        for (int i=1;i<r;++i) {
+//            x=mulull(x,x,n);
+//            if (x==1) return true;
+//			if (x==n-1) return false;
+//		}
+//        return true;
+//	};
+//
+//	return !(composite(2))
+//		   && (n<2047 || !composite(3))
+//		   && (n<1373653 || !composite(5))
+//		   && (n<25326001 || !composite(7))
+//		   && (n<3215031751LL || !composite(11))
+//		   && (n<2152302898747LL || !composite(13))
+//		   && (n<3474749660383LL || !composite(17))
+//		   && (n<341550071728321LL || (!composite(19) && !composite(23)))
+//		   && (n<3825123056546413051LL || (!composite(29) && !composite(31) && !composite(37)));
+//}
 
 
 #endif //PRIMES_H
