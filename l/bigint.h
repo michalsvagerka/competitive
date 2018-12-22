@@ -554,11 +554,13 @@ public:
 
     Num mod_pow(Num exponent, const Num &modulus) const {
         Num result(1), base = (*this) % modulus;
-        for (; exponent.size() > 0; exponent >>= 1){
+        for (; exponent.size() > 0; exponent>>=1) {
             if (exponent.get_bit(0)){
-                result = (result * base) % modulus;
+                result *= base;
+                result %= modulus;
             }
-            base = (base * base) % modulus;
+            base *= base;
+            base %= modulus;
         }
         return result;
     }
