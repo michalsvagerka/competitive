@@ -414,6 +414,7 @@ public:
         b >>= n;
 
         do {
+            a >>= a.count_trailing_zeros();
             b >>= b.count_trailing_zeros();
             if (cmp_abs(a, b) > 0) a.words.swap(b.words);
             sub_unsigned_overwrite(b, a);
