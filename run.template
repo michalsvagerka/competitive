@@ -59,7 +59,7 @@ int main() {
 				}
 			} else {
 			    std::cout << " ?? (" << currentTime << "s)" << std::endl;
-			    std::cout << "Input: \n" << test.input << std::endl;
+			    std::cout << "Input: \n" << test.input.substr(0, 1000) << std::endl;
 			    std::cout << "Actual output: \n" << out.str() << std::endl;
 			}
 		}

@@ -1,0 +1,45 @@
+#include "../l/lib.h"
+
+namespace tc {
+    template <typename T> void read(istream& cin, T& v) { cin >> v; }
+    template <typename T> void read(istream& cin, string& s) {
+        char c; cin >> c >> c;
+        while (c != '"') { s += c; cin >> c; }
+    }
+    template <typename T> void read(istream& cin, vector<T>& v) {
+        char c; cin >> c;
+        while (c != '}') { T t; cin >> t; v.push_back(t); cin >> c; }
+    }
+    template<int S, bool Enable, typename ... Args>
+    struct FillerImpl { static void fill(tuple<Args...>&, istream&) {}};
+    template<int S, typename...Args> struct Filler : public FillerImpl<S, S < sizeof...(Args), Args...> {};
+    template<int S, typename ... Args> struct FillerImpl<S, true, Args...> {
+        static void fill(tuple<Args...> &T, istream &cin) {
+            read(cin, std::get<S>(T));
+            Filler<S + 1, Args...>::fill(T, cin);
+        }
+    };
+
+    template<int ...> struct seq {};
+    template<int N, int ...S> struct gens : gens<N - 1, N - 1, S...> {};
+    template<int ...S> struct gens<0, S...> { typedef seq<S...> type; };
+
+    template<int ...S, typename Clz, typename Ret, typename ...Args>
+    Ret call(seq<S...>, Clz *obj, Ret (Clz::*fn)(Args... args), tuple<Args...> &t) { return (obj->*fn)(std::get<S>(t) ...); }
+
+    template <typename Ret, typename Clz, typename ... Args>
+    void test(istream &cin, Clz *obj, Ret (Clz::*fn)(Args... args), ostream& cout) {
+        tuple<Args...> T;
+        Filler<0, Args...>::fill(T, cin);
+        cout << call(typename gens<sizeof...(Args)>::type(), obj, fn, T) << '\n';
+    }
+}
+
+class %ClassName% {
+public:
+
+
+    void solve(istream& cin, ostream& cout) {
+        tc::test(cin, this, &%ClassName%::name, cout);
+    }
+};

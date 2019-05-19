@@ -19,11 +19,14 @@ public:
     Fraction operator*(const Fraction& o) const { Fraction f(*this); return f *= o; }
     Fraction operator/(const Fraction& o) const { Fraction f(*this); return f /= o; }
 
-private:
     Fraction& norm() {
         ll g = gcd(abs(u),abs(v));
         u /= g;
         v /= g;
+        if (v < 0) {
+            u = -u;
+            v = -v;
+        }
         return *this;
     }
 

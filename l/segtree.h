@@ -17,12 +17,12 @@ template <typename F, typename CombineOp, typename ModifyOp = NoOp<F>> struct Se
 		mop.setup(2*n,def);
 	}
 
-	void setup(vector<F> & data, F def = F()) {
+	void setup(vector<F> & data, F def = F(), F def2 = F()) {
 		n = 1<<logceil(data.size());
 		T = vector<F>(2*n, def);
 		copy(data.begin(), data.end(), T.begin() + n);
 		for (ui i = n-1; i > 0; i--) T[i] = cop(T[i<<1],T[i<<1|1]);
-		mop.setup(2*n,def);
+		mop.setup(2*n,def2);
 	}
 
 	inline void put(ui x, F n) { put(x, x, n); }

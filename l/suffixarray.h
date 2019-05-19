@@ -21,15 +21,15 @@ public:
 		}
 		vector<Index> RA(N), SA(N), C(N);
 		for (Index k = 1; k < N; k <<= 1) {
-			counting_sort(R, C, SA, k);
-			counting_sort(R, C, SA, 0);
+			counting_sort(R, C, SA, k, r+1);
+			counting_sort(R, C, SA, 0, r+1);
 			RA[S[0]] = r = 0;
 			for (Index i = 1; i < N; ++i) {
-				RA[S[i]] = r += (R[S[i]] != R[S[i - 1]] || S[i] + k >= N || S[i - 1] + k >= N ||
-								R[S[i] + k] != R[S[i - 1] + k]);
+				RA[S[i]] = r += (R[S[i]] != R[S[i-1]] || S[i]+k >= N || S[i-1]+k >= N ||
+								R[S[i]+k] != R[S[i-1]+k]);
 			}
 			swap(RA, R);
-			if (R[S[N - 1]] == N - 1)break;
+			if (R[S[N-1]] == N-1) break;
 		}
 		for (Index i = 0; i < N; ++i) { I[S[i]] = i; }
 		if (PrecomputeLCP) {
@@ -70,12 +70,14 @@ public:
 		return min(RMQ[p][i], RMQ[p][j - (1 << p)]);
 	}
 
-	inline void counting_sort(const vector<int> &R, vector<int> &C, vector<int> &SA, int k) {
+	inline void counting_sort(const vector<int> &R, vector<int> &C, vector<int> &SA, int k, int r) {
 		Index i;
-		fill(C.begin(), C.end(), 0);
-		for (i = 0; i < N; i++) { C[i + k < N ? R[i + k] : 0]++; }
-		for (Index sum = i = 0; i < N; i++) { C[i] = (sum += C[i], sum - C[i]); }
-		for (i = 0; i < N; i++) { SA[C[S[i] + k < N ? R[S[i] + k] : 0]++] = S[i]; }
+		fill(C.begin(), C.begin()+r, 0);
+		for (i = k; i < N; i++) C[R[i]]++;
+		C[0] += k;
+		for (Index sum = i = 0; i < r; i++) { C[i] = (sum += C[i], sum - C[i]); }
+		if (k) for (i = 0; i < N; i++) { SA[C[S[i]+k<N ? R[S[i]+k] : 0]++] = S[i]; }
+		else for (i = 0; i < N; i++) { SA[C[R[S[i]]]++] = S[i]; }
 		swap(SA, S);
 	}
 

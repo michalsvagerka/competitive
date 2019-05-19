@@ -1,7 +1,7 @@
 template <typename K, typename V> struct avlnode {
 	avlnode(K k, V v) : l(0),r(0),h(1),s(1),k(k),v(v) {}
 	~avlnode() { delete l; delete r; }
-	avlnode<K,V> *l,*r;int h,s;K k;V v;
+	avlnode<K,V> *left,*right;int h,s;K k;V v;
 	int size() const { return s; }
 	void u() { s=(l?l->s:0)+(r?r->s:0)+1; h=max(l?l->h:0,r?r->h:0)+1; }
 	avlnode<K,V>*rr() {auto x = l; l = x->r; u(); x->r = this; x->u(); return x; }

@@ -6,11 +6,21 @@ constexpr double PI = 3.14159265358979323846;
 template <typename T> struct Segment;
 
 template <typename T> struct Point : public pair<T,T> {
+    using pair<T,T>::x;
+    using pair<T,T>::y;
+
     Point(T a=0,T b=0) : pair<T,T>(a,b) {}
     Point(const pair<T,T> &p) : pair<T,T>(p.x,p.y) {}
     Point(const Point<T>&p) = default;
     Point<T>& operator=(const Point<T>&p) = default;
 
+    Point<T>& operator-=(const Point<T>&p) { x -= p.x; y -= p.y; return *this; }
+    Point<T>& operator+=(const Point<T>&p) { x += p.x; y += p.y; return *this; }
+    Point<T>& operator*=(T f) { x *= f; y *= f; return *this; }
+    Point<T> operator-(const Point<T>&p) const { Point<T> t(*this); t -= p; return t; }
+    Point<T> operator+(const Point<T>&p) const { Point<T> t(*this); t += p; return t; }
+    Point<T> operator*(T f) const { Point<T> t(*this); t *= f; return t; }
+    
     T squaredDistance(const Point<T>&o) const { return Segment<T>{*this,o}.squaredLength(); }
     double distance(const Point<T>&o) const { return Segment<T>{*this,o}.length(); }
 };
@@ -137,6 +147,26 @@ template <typename T> struct Circle {
 //        T dist = center.squaredDistance(o.center);
 //        return dist == (radius-o.radius)*(radius-o.radius) || dist == (radius+o.radius)*(radius+o.radius);
 //    }
+
+    // only works for doubles and if the circles intersect
+    pair<Point<T>, Point<T>> intersections(Circle c) {
+        Point<T> P0 = center;
+        Point<T> P1 = c.center;
+        T d = P0.distance(P1);
+        T a = (sqRadius - c.sqRadius + d*d)/(2*d);
+        T h = sqrt(sqRadius - a*a);
+        Point<T> P2 = (P1 - P0) * (a/d) + P0;
+        T x3 = P2.x + h*(P1.y - P0.y)/d;
+        T y3 = P2.y - h*(P1.x - P0.x)/d;
+        T x4 = P2.x - h*(P1.y - P0.y)/d;
+        T y4 = P2.y + h*(P1.x - P0.x)/d;
+
+        return {{x3, y3}, {x4, y4}};
+    }
+    
+    Point<T> invert(const Point<T> & t) const {
+        return center + (t-center)*(sqRadius / t.squaredDistance(center));
+    }
 
     Circle(const Point<T> &c, T r) : center(c), sqRadius(r) {}
     explicit Circle(const Point<T> &p) : center(p), sqRadius(0) {}

@@ -21,7 +21,7 @@ struct LSegTree {
 
     inline ValueType operator[](pair<ui,ui> x) { return get(x.x, x.y); }
     inline ValueType operator[](ui x) { return get(x, x); }
-    inline ValueType get(ui x) const { return get(x, x); }
+    inline ValueType get(ui x) { return get(x, x); }
     inline ValueType get(ui from, ui to) { return getInner(from, to, 1, n); }
 
     void putInner(ui from, ui to, TagType v, ui i, ui s) {
@@ -55,7 +55,9 @@ struct LSegTree {
 
     ValueType getInner(ui from, ui to, ui i, ui s) {
         while (true) {
-            if (from == 0 && to == s-1) return T[i].x;
+            if (from == 0 && to == s-1) {
+                return T[i].x;
+            }
             pushTagDown(i, s);
             s >>= 1; i <<= 1;
             if (to & s) {
@@ -63,12 +65,99 @@ struct LSegTree {
                 if (from & s) {
                     from ^= s; i |= 1;
                 } else {
-                    return combineValues(
-                            getInner(from, s-1, i, s),
-                            getInner(0, to, i|1, s)
+                    auto a = getInner(from, s-1, i, s),
+                            b = getInner(0, to, i|1, s);
+                    return combineValues(a,b
                     );
                 }
             }
+        }
+    }
+
+    /** Returns lowest l such that pred(value[l,x]) returns true. The pred must be monotone!
+     * If no suffix satisfies the condition, returns x+1 (i.e. empty interval).
+     * If you want suffix of the whole array, use x == n-1 */
+    template <typename Pred> ui longestSuffix(ui x, Pred pred) {
+        ValueType value = nullValue;
+        return longestSuffixInner2(x, 1, 0, n, value, pred);
+    }
+
+    template <typename Pred> ui longestSuffixInner(ui i, ui l, ui r, ValueType &curValue, Pred pred) {
+        if (l + 1 != r) pushTagDown(i, r-l);
+        ValueType nextValue = combineValues(T[i].x, curValue);
+        if (pred(nextValue)) { curValue = nextValue; return l; }
+        if (l + 1 == r) return r;
+        ui s = longestSuffixInner(i << 1 | 1, (l + r) / 2, r, curValue, pred);
+        if (s == (l+r)/2) {
+            return longestSuffixInner(i << 1, l, (l + r) / 2, curValue, pred);
+        } else {
+            return s;
+        }
+    }
+
+    template <typename Pred> ui longestSuffixInner2(ui x, ui i, ui l, ui r, ValueType &curValue, Pred pred) {
+        if (x >= r-1) {
+            return longestSuffixInner(i, l, r, curValue, pred);
+        }
+
+        if (l + 1 == r) {
+            ValueType nextValue = combineValues(T[i].x, curValue);
+            if (pred(nextValue)) { curValue = nextValue; return l; }
+            else return r;
+        }
+
+        pushTagDown(i, r-l);
+        ui m = (l+r)/2;
+        if (x < m) {
+            return longestSuffixInner2(x, i << 1, l, (l + r) / 2, curValue, pred);
+        } else {
+            ui s = longestSuffixInner2(x, i << 1 | 1, (l + r) / 2, r, curValue, pred);
+            if (s == (l + r) / 2) {
+                return longestSuffixInner(i << 1, l, (l + r) / 2, curValue, pred);
+            } else {
+                return s;
+            }
+        }
+    }
+
+    /** Returns highest r such that pred(value[x,r]) returns true. The pred must be monotone!
+     * If no prefix satisfies the condition, returns r-1 (i.e. empty interval).
+     * If you want prefix of the whole array, use x == 0.
+     *
+     * BEWARE: If the whole array satisfies the condition, you will get n (which is power of two)
+     * and NOT the actual size. */
+    template <typename Pred> ui longestPrefix(ui x, Pred pred) {
+        ValueType value = nullValue;
+        return longestPrefixInner2(x, 1, 0, n, value, pred) - 1;
+    }
+
+    template <typename Pred> ui longestPrefixInner(ui i, ui l, ui r, ValueType &curValue, Pred pred) {
+        if (l + 1 != r) pushTagDown(i, r-l);
+        ValueType nextValue = combineValues(T[i].x, curValue);
+        if (pred(nextValue)) { curValue = nextValue; return r; }
+        if (l + 1 == r) return l;
+        ui s = longestPrefixInner(i << 1, l, (l + r) / 2, curValue, pred);
+        return s == (l + r) / 2 ? longestPrefixInner(i << 1 | 1, (l + r) / 2, r, curValue, pred) : s;
+    }
+
+    template <typename Pred> ui longestPrefixInner2(ui x, ui i, ui l, ui r, ValueType &curValue, Pred pred) {
+        if (x <= l) {
+            return longestPrefixInner(i, l, r, curValue, pred);
+        }
+
+        if (l + 1 == r) {
+            ValueType nextValue = combineValues(T[i].x, curValue);
+            if (pred(nextValue)) { curValue = nextValue; return r; }
+            else return l;
+        }
+
+        pushTagDown(i, r-l);
+        ui m = (l+r)/2;
+        if (x >= m) {
+            return longestPrefixInner2(x, i << 1 | 1, m, r, curValue, pred);
+        } else {
+            ui s = longestPrefixInner2(x, i << 1, l, m, curValue, pred);
+            return s == m ? longestPrefixInner(i << 1 | 1, m, r, curValue, pred) : s;
         }
     }
 
@@ -89,25 +178,17 @@ struct LSegTree {
 
 template <typename F> void LAddOp(F &a, F b) { a += b; }
 template <typename F> void LAddOp2(F &a, F b, ui) { a += b; }
-//template <typename F> void LAddOp2(F &a, F b, ui x) { a += b * x; }
 template <typename F> F LMinOp(F a, F b) { return std::min(a, b); }
 template <typename F> F LMaxOp(F a, F b) { return std::max(a, b); }
+template <typename T> T LSumOp(T a, T b) { return a + b; }
+template <typename T> void LAssignOp(T &a, T b) { if (b != 0) a = b; };
+template <typename T> void LAssignOp2(T &a, T b, ui) { if (b != 0) a = b; };
+template <typename T> void LAssignMultOp(T &a, T b, ui s) { if (b != 0) a = b*s; };
 
-//template <typename F> struct AddOp { F operator()(F a, F b) { return a+b; }};
-//template <typename F> struct MinOp { F operator()(F a, F b) { return std::min(a,b); }};
-//template <typename F> struct MaxOp { F operator()(F a, F b) { return std::max(a,b); }};
-//template <typename F> struct MultiplyOp { F operator()(F a, F b) { return a*b; }};
-//template <typename F> struct MultOp { F operator()(F a, ui b) { return a*b; }};
-//template <typename F> struct IdempOp { F operator()(F a, ui b) { return a; }};
-//template <typename F> struct InverseOp { F operator()(F a, F b) { return b?b-a:a; }};
 
-//template<typename T> using LAddSumTree = LSegTree<T, T, LAddOp<T>, LAddMultOp2<T>, LAddOp<T>>;
 template<typename T> using LAddMaxTree = LSegTree<T, T, LAddOp<T>, LAddOp2<T>, LMaxOp<T>>;
 template<typename T> using LAddMinTree = LSegTree<T, T, LAddOp<T>, LAddOp2<T>, LMinOp<T>>;
-//template<typename T> using LAssignMinTree = LSegTree<T, MinOp<T>, Lazy<T, MinOp<T>, IdempOp<T>>>;
-//template<typename T> using AssignMaxTree = SegTree<T, MaxOp<T>, Lazy<T, MaxOp<T>, IdempOp<T>>>;
-//template<typename T> using XorTree = SegTree<T, AddOp<T>, Lazy<T, InverseOp<T>, MultOp<T>>>;
 
-//template<typename T> using SetMinTree = SegTree<T, MinOp<T>>;
-//template<typename T> using SetMaxTree = SegTree<T, MaxOp<T>>;
-//template<typename T> using SetMulTree = SegTree<T, MultiplyOp<T>>;
+template<typename T> using AssignSumTree = LSegTree<T, T, LAssignOp<T>, LAssignMultOp<T>, LSumOp<T>>;
+template<typename T> using AssignMaxTree = LSegTree<T, T, LAssignOp<T>, LAssignOp2<T>, LMaxOp<T>>;
+

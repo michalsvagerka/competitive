@@ -32,4 +32,17 @@ template <typename Input> struct KMP {
     vector<int> T;
 };
 
+template <typename Input>
+vector<int> PrefixFunction(const Input &S) {
+    int N = S.length();
+    vector<int> P(N);
+    for (int i = 1; i < N; i++) {
+        int j = P[i-1];
+        while (j > 0 && S[i] != S[j]) j = P[j-1];
+        j += (S[i] == S[j]);
+        P[i] = j;
+    }
+    return P;
+}
+
 #endif //MAJK_STRING_H

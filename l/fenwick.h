@@ -10,6 +10,14 @@ template<typename T> struct Fenwick {
     void set(int i, T v) {add(i, v-get(i)); }
     constexpr int lsb(int i)const{return i&-i;}
     ui N;vector<T> F;T t;
+    int max_lower(T v) {
+        if (F[0] >= v) return 0;
+        if (F[N-1] < v) return N-1;
+            
+        int x = 0; T a = t;
+        for (int s = N>>1; s > 0; s >>= 1) if (a+F[x+s-1]<v) { a += F[x+s-1]; x += s; }
+        return x;
+    }
 };
 
 template<typename T> struct Fenwick2 {

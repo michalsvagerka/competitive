@@ -22,8 +22,8 @@ pair<ull,ull> mulull(ull a, ull b) {
     __int128 result = (__int128) a * (__int128) b;
     return {(ull) (result >> 64), (ull) result};
 #else
-    ull c = (ui)a, d = a>>32, e = (ui)b, f = b>>32, g = d*f, h = d*e, i = f*c, j = c*e, k = (j>>32)+(ui)h+(ui)i, l = g+(h>>32)+(i>>32)+(k>>32);
-	return {l, ((h+i) << 32) + j};
+    ull c = (ui)a, d = a>>32, e = (ui)b, f = b>>32, g = d*f, h = d*e, i = f*c, j = c*e, k = (j>>32)+(ui)h+(ui)i, left = g+(h>>32)+(i>>32)+(k>>32);
+	return {left, ((h+i) << 32) + j};
 #endif
 }
 

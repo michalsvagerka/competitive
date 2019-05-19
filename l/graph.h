@@ -66,7 +66,7 @@ public:
 /** Centroid decomposition.
  *
  * Input: graph as adjacency list (either int or pair<int,T>)
- * Output: array U of intergers of size |V|
+ * Output: array U of integers of size |V|
  *
  * Here, U[v] is the bfs order in the centroid tree. For DFS, only process
  * vertices with higher U[w] when processing centroid v, for instance:
@@ -74,7 +74,7 @@ public:
  * void dfs(int u, int p, int ctr, ...) {
  *      ....
  *      for (int v:E[u]) {
- *          if (v != p && U[u] > U[ctr]) {
+ *          if (v != p && U[v] > U[ctr]) {
  *              dfs(v, u, ctr, ...);
  *          }
  *      }
