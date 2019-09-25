@@ -10,12 +10,11 @@
 #include <iomanip>
 #include <set>
 #include <functional>
-#include <fstream>
 #include <algorithm>
+#include <numeric>
 #include <cassert>
 #include <cmath>
 #include <string>
-#include <sstream>
 #include <queue>
 #include <array>
 #include <bitset>
@@ -31,7 +30,6 @@ template <typename T, typename U> std::ostream&operator<<(std::ostream&o, const 
 template<typename T>std::ostream&operator<<(std::ostream&o,const vector<T>&t) {if(t.empty())o<<'\n';for(size_t i=0;i<t.size();++i){o<<t[i]<<" \n"[i == t.size()-1];}return o;}
 template<typename T> using minheap = priority_queue<T, vector<T>, greater<T>>;
 template<typename T> using maxheap = priority_queue<T, vector<T>, less<T>>;
-template <typename T> bool in(T a, T b, T c) { return a <= b && b < c; }
 ui logceil(ll x) { return x?8*sizeof(ll)-__builtin_clzll(x):0; }
 
 namespace std { template<typename T,typename U>struct hash<pair<T,U>>{hash<T>t;hash<U>u;size_t operator()(const pair<T,U>&p)const{return t(p.x)^(u(p.y)<<7);}}; }

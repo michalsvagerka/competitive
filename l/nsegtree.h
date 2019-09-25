@@ -24,6 +24,17 @@ struct LSegTree {
     inline ValueType get(ui x) { return get(x, x); }
     inline ValueType get(ui from, ui to) { return getInner(from, to, 1, n); }
 
+    void pushAllDown() {
+        ui s = n, t = 1;
+        while (s) {
+            for (ui i = t; i < (t<<1); ++i) pushTagDown(i, s);
+            s >>= 1;
+            t <<= 1;
+        }
+    }
+
+    inline ValueType rawGet(ui x) { return T[n+x].x; }
+
     void putInner(ui from, ui to, TagType v, ui i, ui s) {
         vector<int> Q;
         ui r = i;
@@ -185,10 +196,9 @@ template <typename T> void LAssignOp(T &a, T b) { if (b != 0) a = b; };
 template <typename T> void LAssignOp2(T &a, T b, ui) { if (b != 0) a = b; };
 template <typename T> void LAssignMultOp(T &a, T b, ui s) { if (b != 0) a = b*s; };
 
-
 template<typename T> using LAddMaxTree = LSegTree<T, T, LAddOp<T>, LAddOp2<T>, LMaxOp<T>>;
 template<typename T> using LAddMinTree = LSegTree<T, T, LAddOp<T>, LAddOp2<T>, LMinOp<T>>;
 
+template<typename T> using AddSumTree = LSegTree<T, T, LAddOp<T>, LAddOp2<T>, LSumOp<T>>;
 template<typename T> using AssignSumTree = LSegTree<T, T, LAssignOp<T>, LAssignMultOp<T>, LSumOp<T>>;
 template<typename T> using AssignMaxTree = LSegTree<T, T, LAssignOp<T>, LAssignOp2<T>, LMaxOp<T>>;
-

@@ -2,35 +2,58 @@
 
 class EGraphCutting {
 public:
-    vector<set<int>> E;
+    vector<vector<int>> E;
     vector<vector<int>> Ans;
-
-    void solve(istream& cin, ostream& cout) {
-        int N, M; cin >> N >> M;
-        E.resize(N);
-        for (int i = 0; i < M; ++i) {
-            int a, b; cin >> a >> b;
-            --a; --b;
-            E[a].insert(b);
-            E[b].insert(a);
-        }
-
-        for (int i = 0; i < N; ++i) {
-            if (!E[i].empty()) {
-                vector<int> m;
-                if (!make_euler(i, m) || m.size()%2 == 1) {
-                    cout << "No solution\n";
-                    return;
+    set<pii> U;
+    vector<bool> V;
+    vector<int> P;
+    
+    bool dfs(int u, int p) {
+        V[u] = true;
+        int w = -1;
+        for (int v : E[u]) {
+            if (U.count({v,u}) == 0 && U.count({u,v}) == 0 && v != p && (V[v] || !dfs(v, u))) {
+                if (w == -1) {
+                    w = v;
                 } else {
-                    int g = m.size();
-                    for (int j = 0; j + 2 < g; j += 2) {
-                        Ans.push_back({m[j], m[j+1], m[j+2]});
-                    }
+                    U.insert({w,u});
+                    U.insert({v,u});
+                    Ans.push_back({w+1, u+1, v+1});
+                    w = -1;
                 }
-
             }
         }
 
-        for (auto ans: Ans) cout << ans;
+        if (w != -1) {
+            U.insert({w,u});
+            U.insert({p,u});
+            Ans.push_back({w+1, u+1, p+1});
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    void solve(istream& cin, ostream& cout) {
+        int N, M; cin >> N >> M;
+        if (M % 2 == 1) {
+            cout << "No solution\n";
+            return;
+        }
+
+        V.assign(N, false);
+        P.assign(N, -1);
+        E.resize(N);
+        for (int i = 0; i < M; ++i) {
+            int u, v;
+            cin >> u >> v;
+            --u;
+            --v;
+            E[u].push_back(v);
+            E[v].push_back(u);
+        }
+
+        dfs(0, -1);
+        for (auto&p: Ans) cout << p;
     }
 };

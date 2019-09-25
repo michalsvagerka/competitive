@@ -22,15 +22,19 @@ template <typename T> struct Point : public pair<T,T> {
     Point<T> operator*(T f) const { Point<T> t(*this); t *= f; return t; }
     
     T squaredDistance(const Point<T>&o) const { return Segment<T>{*this,o}.squaredLength(); }
-    double distance(const Point<T>&o) const { return Segment<T>{*this,o}.length(); }
+    long double distance(const Point<T>&o) const { return Segment<T>{*this,o}.length(); }
+    T sqNorm() const { return x*x+y*y; }
+    long double norm() const { return sqrtl(x*x+y*y); }
+    T dot(const Point<T>&o) const { return x*o.x + y*o.y; }
 };
 
 template <typename T> ostream& operator<<(ostream&o, const Point<T>&p) { o << p.x << ' ' << p.y; return o; }
 
+// >0 left turn, <0 right turn, =0 straight
 template <typename T> T ccw(const Point<T>&a, const Point<T>&b, const Point<T>&c) { return (b.x-a.x)*(c.y-a.y) - (b.y-a.y)*(c.x-a.x); }
 template <typename T> T area(const Point<T>&a,const Point<T>&b,const Point<T>&c) { return abs(ccw(a,b,c)); }
 template <typename T> double cosangle(const Point<T>&a, const Point<T> &b, const Point<T> &c) {
-    return ((b.x-a.x)*(c.x-a.x) + (b.y-a.y)*(c.y-a.y)) / a.distance(b) / a.distance(c);
+    return (double)((b.x-a.x)*(c.x-a.x) + (b.y-a.y)*(c.y-a.y)) / a.distance(b) / a.distance(c);
 }
 
 template <typename T> bool acuteAngle(const Point<T> &a, const Point<T> &b, const Point<T> &c) {
@@ -57,7 +61,7 @@ template <typename T> struct Segment : public pair<Point<T>,Point<T>> {
     inline T dx() const { return x.x - y.x; }
     inline T dy() const { return x.y - y.y; }
     T squaredLength() const { return dx()*dx()+dy()*dy(); }
-    double length() const { return sqrt(squaredLength()); }
+    long double length() const { return sqrtl(squaredLength()); }
     
     bool contains(const Point<T> &q) const {
         return collinear(x,q,y) && ((q.x <= max(x.x, y.x) && q.x >= min(x.x, y.x)) && (q.y <= max(x.y, y.y) && q.y >= min(x.y, y.y)));
@@ -88,8 +92,8 @@ template <typename T> struct Line : public pair<Point<T>,Point<T>> {
     inline T c() const { return x.y * y.x - x.x * y.y; }
 
     double distance(const Point<T> &p) const {
-        ll px = dx(), py = dy(), dL = px * px + py * py;
-        return abs(py * p.x - px * p.y + y.x * x.y - y.y * x.x) / sqrt(dL);
+        auto d = y-x, e = x-p;
+        return (e - d*(e.dot(d)/d.sqNorm())).norm();
     }
 
     Point<double> project(const Point<T> &p) const {
@@ -101,14 +105,14 @@ template <typename T> struct Line : public pair<Point<T>,Point<T>> {
         return abs(l.dx() * dy()-l.dy() * dx()) < 1e-6;
     }
 
-    Point<double> intersection(const Line<T> &l) {
-        double det = l.dx() * dy()-l.dy() * dx();
-        if (abs(det) < 1e-6) /// det == 0
+    Point<long double> intersection(const Line<T> &l) {
+        long double det = l.dx() * dy()-l.dy() * dx();
+        if (abs(det) < 1e-12) /// det == 0
             return {1e300, 1e300}; /// no intersection
         else {
-            double c1 = c(), c2 = l.c();
-            double x = -(c2 * dx() - l.dx() * c1) / det;
-            double y = -(-l.dy() * c1 + c2 * dy()) / det;
+            long double c1 = c(), c2 = l.c();
+            long double x = -(c2 * dx() - l.dx() * c1) / det;
+            long double y = -(-l.dy() * c1 + c2 * dy()) / det;
             return {x, y};
         }
     };
@@ -207,18 +211,20 @@ private:
     }
 };
 
+template <typename T> T doubleSignedArea(const vector<Point<T>>&P) {
+    if (P.empty()) return T(0);
+    T area = P.back().x*P[0].y - P.back().y*P[0].x;
+    for (int i = 0; i < P.size()-1; ++i) area += (P[i].x * P[i+1].y - P[i+1].x * P[i].y);
+    return area;
+}
+
 template <typename T> struct Polygon : public vector<Point<T>> {
     using vector<Point<T>>::vector;
     using vector<Point<T>>::at;
     using vector<Point<T>>::front;
     using vector<Point<T>>::back;
 
-    T doubleSignedArea() const {
-        if (this->empty()) return T(0);
-        T area = back().x*front().y - back().y*front().x;
-        for (int i = 0; i < this->size()-1; ++i) area += (at(i).x * at(i+1).y - at(i+1).x * at(i).y);
-        return area;
-    }
+    T doubleSignedArea() const { return ::doubleSignedArea(*this); }
 
     double circumference() const {
         if (this->empty()) return T(0);
@@ -227,6 +233,7 @@ template <typename T> struct Polygon : public vector<Point<T>> {
         return res;
     }
 };
+
 
 template <typename T> Polygon<T> convexhull(const vector<Point<T>> &v) {
     ui N = (ui)v.size(); vector<Point<T>> w(N+1); int lo = 0;

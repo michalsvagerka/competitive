@@ -109,7 +109,6 @@ public:
 
         auto dist = std::distance(begin, end);
 
-        cerr << "Dela " << dist << endl;
         if (dist == 2) {
             a = factory.makeEdge(*begin, *next(begin));
             return { a, a->sym() };
@@ -135,11 +134,9 @@ public:
             auto right = delaunay(begin + dist / 2, end);
             QuadEdge *ldo = left.x, *ldi = left.y, *rdi = right.x, *rdo = right.y;
 
-            cerr << "Locota begin\n";
             // Compute the lower common tangent of L and R
             do {
 
-                cerr << "Locota\n";
                 if(leftOf(rdi->orig, ldi))
                     ldi = ldi->lnext();
                 else if(rightOf(ldi->orig, rdi))
@@ -147,8 +144,6 @@ public:
                 else
                     break;
             } while(true);
-
-            cerr << "Locota end\n";
 
             QuadEdge* basel = factory.connect(rdi->sym(), ldi);
             if(ldi->orig == ldo->orig)

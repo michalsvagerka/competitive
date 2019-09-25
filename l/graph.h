@@ -1,6 +1,6 @@
 // ordinary rooted tree with level ancestry and LCA. look elsewhere
-struct Tree {
-	explicit Tree(int N=1) : N(N), logN(logceil(N)), _root(0), E(N) {}
+struct TreeX {
+	explicit TreeX(int N=1) : N(N), logN(logceil(N)), _root(0), E(N) {}
 	void addEdge(int u,int v){E[u].push_back(v);E[v].push_back(u);}
 	int la(int u, int depth){/*calcLA();*/return _la(u,depth);}
 	inline int lca(int u, int v){/*calcLA();*/return _lca(u,v);}
@@ -86,6 +86,9 @@ public:
     CentroidDecomposition(const vector<vector<EdgeType>> &E) : E(E) {}
 
     const vector<int>& findCentroids() {
+        DFSOrder<EdgeType> DFS(E);
+        auto EF = DFS.linearize();
+
         N = E.size(); U.assign(N, -1);
         int L = 0;
 
@@ -95,7 +98,7 @@ public:
 
                 U[i] = -1;
                 bool root = true;
-                for (auto v:E[i]) {
+                for (auto v:EF[i]) {
                     if (U[t(v)]<0) {
                         if (t(v) > i) U[i] += U[t(v)];
                         else root = false;
@@ -106,13 +109,16 @@ public:
                     int n = -U[i], u = i, p = -1;
                     while (true) {
                         int s = n + U[u];
-                        for (auto v:E[u]) if (t(v)!=p && U[t(v)] < 0) s = max(s, -U[t(v)]);
+                        for (auto v:EF[u]) if (t(v)!=p && U[t(v)] < 0) s = max(s, -U[t(v)]);
                         if (2 * s <= n) { U[u] = j++; break; }
-                        else { for (auto v:E[u]) if (t(v)!=p && -U[t(v)] > n / 2) { p = u;u = t(v);break; } }
+                        else { for (auto v:EF[u]) if (t(v)!=p && -U[t(v)] > n / 2) { p = u;u = t(v);break; } }
                     }
                 }
             }
         }
+        vector<int> Ans(N);
+        for (int i = 0; i < N; ++i) Ans[i] = U[DFS.enter()[i]];
+        swap(Ans, U);
         return U;
     }
 
