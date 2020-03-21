@@ -10,7 +10,7 @@ public:
     Chinese(const vector<ll> &p, ll M) : P(1), M(M), F(p.size()), T(p.size()), p(p) {
         for(int i=0;i<p.size();++i) P*=p[i];
         for(int i=0;i<p.size();++i) F[i]=P/p[i];
-        for(int i=0;i<p.size();++i) T[i]=Ring::div(1, (F[i]%p[i]).to_longlong(), p[i]);
+        for(int i=0;i<p.size();++i) T[i]=Ring::div(1LL, (F[i]%p[i]).to_longlong(), p[i]);
     }
 
     ll operator()(const vector<ll> &R) {

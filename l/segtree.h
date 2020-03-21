@@ -74,6 +74,7 @@ template <typename F> struct InverseOp { F operator()(F a, F b) { return b?b-a:a
 template<typename T> using AddSumTree = SegTree<T, AddOp<T>, Lazy<T, AddOp<T>, MultOp<T>>>;
 template<typename T> using AddMaxTree = SegTree<T, MaxOp<T>, Lazy<T, AddOp<T>, IdempOp<T>>>;
 template<typename T> using AddMinTree = SegTree<T, MinOp<T>, Lazy<T, AddOp<T>, IdempOp<T>>>;
+// NOTE: set defaultValue properly in these (-INF for MAX and INF for MIN), otherwise you'll get weird results
 template<typename T> using AssignMinTree = SegTree<T, MinOp<T>, Lazy<T, MinOp<T>, IdempOp<T>>>;
 template<typename T> using AssignMaxTree = SegTree<T, MaxOp<T>, Lazy<T, MaxOp<T>, IdempOp<T>>>;
 template<typename T> using XorTree = SegTree<T, AddOp<T>, Lazy<T, InverseOp<T>, MultOp<T>>>;

@@ -1,7 +1,7 @@
 template <typename K, typename V> struct avlnode {
 	avlnode(K k, V v) : l(0),r(0),h(1),s(1),k(k),v(v) {}
 	~avlnode() { delete l; delete r; }
-	avlnode<K,V> *left,*right;int h,s;K k;V v;
+	avlnode<K,V> *l,*r;int h,s;K k;V v;
 	int size() const { return s; }
 	void u() { s=(l?l->s:0)+(r?r->s:0)+1; h=max(l?l->h:0,r?r->h:0)+1; }
 	avlnode<K,V>*rr() {auto x = l; l = x->r; u(); x->r = this; x->u(); return x; }
@@ -57,3 +57,9 @@ template<typename K, typename V> struct avl {
 	template<typename T> void foreach(T f) {if(r)r->foreach(f);}
 	avlnode<K,V> *r;
 };
+
+/*
+ * 1000000000 701
+426 554 462 419 147 249 347 387 990 351
+525 671 915 991 958 107 31 833 201 303
+ */

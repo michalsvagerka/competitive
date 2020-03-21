@@ -11,6 +11,7 @@ template<typename T> struct Fenwick {
     constexpr int lsb(int i)const{return i&-i;}
     ui N;vector<T> F;T t;
     int max_lower(T v) {
+        // TODO: this returns suspicious results ...
         if (F[0] >= v) return -1;
         if (F[N-1] < v) return N-1;
             
