@@ -10,7 +10,7 @@ template <unsigned int N> class Field {
 	/*extended GCD(slow):ll t=0,nt=1,r=N,nr=a;while(nr){ll q=r/nr;t-=q*nt;swap(t,nt);r-=q*nr;swap(r,nr);}assert(r<=1);return(t<0)?t+N:t;*/
 	inline ui inv(ui a){return pow(a,N-2);}
 public:
-    inline Field(int x = 0) : v(x) {}
+    inline Field(int x = 0) : v(x<0?N+x:x) {}
 	inline Field<N> pow(int p){return (*this)^p; }
 	inline Field<N> operator^(int p){return {(int)pow(v,(ui)p)};}
     inline Field<N>&operator+=(const Field<N>&o) {if (v+o.v >= N) v += o.v - N; else v += o.v; return *this; }

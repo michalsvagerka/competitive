@@ -27,6 +27,9 @@ public:
             u = -u;
             v = -v;
         }
+        if (v == 0 && u < 0) {
+            u = -u;
+        }
         return *this;
     }
 

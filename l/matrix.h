@@ -182,7 +182,8 @@ private:
 			 *   - for numerical stability it's best to select pivot with largest magnitude
 			 *     but for Field it doesn't matter (and Field doesn't even have operator< */
 			pair<T, size_t> Q = {A[pivot][i], pivot};
-			for (size_t j = pivot+1; j < R; ++j) if (A[j][i] != 0) Q = {A[j][i], j};
+            for (size_t j = pivot+1; j < R; ++j) if (A[j][i] != 0) Q = {A[j][i], j};
+//            for (size_t j = pivot+1; j < R; ++j) if (abs(A[j][i]) > abs(Q.x)) Q = {A[j][i], j};
 			if (Q.x == 0) continue;
 
 			if (Q.y != i) swap(A[Q.y], A[pivot]);

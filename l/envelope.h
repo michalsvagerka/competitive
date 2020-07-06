@@ -53,6 +53,11 @@ namespace Envelope {
             auto l = parent::lower_bound({x, numeric_limits<T>::min()});
             return l == parent::end() ? -1 : l->id;
         }
+
+        pair<int, T> bestIndexed(T x) const {
+            auto l = parent::lower_bound({x, numeric_limits<T>::min()});
+            return (l == parent::end()) ? pair<int, T>{-1, T(0)} : pair<int, T>{l->id, l->m * x + l->b};
+        }
     };
 
     // Lower envelope. WARNING: the internal representation changes m & b.

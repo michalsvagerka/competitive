@@ -28,7 +28,7 @@ public:
     inline explicit operator int() const { return v; }
     void checkMod(const RField&o) {}
     inline static vector<RField>fact(int t){vector<RField>F(t+1,1);for(int i=2;i<=t;++i){F[i]=F[i-1]*i;}return F;}
-//    inline static vector<RField>invfact(int t){vector<RField>F(t+1,1);RField X{1};for(int i=2;i<=t;++i){X=X*i;}F[t]=1/X;for(int i=t-1;i>=2;--i){F[i]=F[i+1]*(i+1);}return F;}
+    inline static vector<RField>invfact(int t){vector<RField>F(t+1,1);RField X{1};for(int i=2;i<=t;++i){X=X*i;}F[t]=RField{1}/X;for(int i=t-1;i>=2;--i){F[i]=F[i+1]*(i+1);}return F;}
 private:
     int v;
 };
