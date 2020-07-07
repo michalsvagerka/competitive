@@ -132,7 +132,7 @@ struct LSegTree {
     }
 
     /** Returns highest r such that pred(value[x,r]) returns true. The pred must be monotone!
-     * If no prefix satisfies the condition, returns r-1 (i.e. empty interval).
+     * If no prefix satisfies the condition, returns x-1 (i.e. empty interval).
      * If you want prefix of the whole array, use x == 0.
      *
      * BEWARE: If the whole array satisfies the condition, you will get n (which is power of two)
@@ -202,3 +202,4 @@ template<typename T> using LAddMinTree = LSegTree<T, T, LAddOp<T>, LAddOp2<T>, L
 template<typename T> using AddSumTree = LSegTree<T, T, LAddOp<T>, LAddOp2<T>, LSumOp<T>>;
 template<typename T> using AssignSumTree = LSegTree<T, T, LAssignOp<T>, LAssignMultOp<T>, LSumOp<T>>;
 template<typename T> using AssignMaxTree = LSegTree<T, T, LAssignOp<T>, LAssignOp2<T>, LMaxOp<T>>;
+template<typename T> using AssignMinTree = LSegTree<T, T, LAssignOp<T>, LAssignOp2<T>, LMinOp<T>>;
